@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 import { AppToaster } from "@/components/app-toaster";
+import { DeleteProductButton } from "@/components/inventory/delete-product-button";
 import { PageHeading } from "@/components/inventory/page-heading";
 import { ProductForm } from "@/components/inventory/product-form";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -40,9 +41,9 @@ export default async function EditProductPage({
         Back to inventory details
       </Link>
       <PageHeading
-        eyebrow="Catalog"
+        eyebrow="Inventory"
         title={`Edit ${product.name}`}
-        description="Update catalog information and the threshold used to calculate inventory status."
+        description="Update product information and the threshold used to calculate its stock status."
       />
       <section className="mt-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-7">
         <ProductForm
@@ -56,8 +57,20 @@ export default async function EditProductPage({
             categoryId: product.category?.id ?? null,
             unitPrice: product.unitPrice,
             minimumStock: product.minimumStock,
-            active: product.active,
           }}
+        />
+      </section>
+      <section className="mt-6 rounded-2xl border border-rose-400/20 bg-slate-800/60 p-5 sm:p-7">
+        <h2 className="text-base font-bold text-white">Delete stock item</h2>
+        <p className="mt-1 mb-4 text-sm leading-6 text-slate-400">
+          Safely remove this item from active inventory while retaining its
+          historical stock movements.
+        </p>
+        <DeleteProductButton
+          productId={product.id}
+          productName={product.name}
+          hasHistory={product.hasHistory}
+          redirectTo="/inventory"
         />
       </section>
       <AppToaster />

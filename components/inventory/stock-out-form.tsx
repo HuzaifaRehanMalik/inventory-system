@@ -11,6 +11,7 @@ import {
   TextAreaField,
 } from "@/components/inventory/form-controls";
 import { ApiClientError, apiRequest } from "@/lib/client-api";
+import { dateInputValue } from "@/lib/inventory/date";
 
 type ProductOption = {
   id: string;
@@ -21,11 +22,9 @@ type ProductOption = {
 
 export function StockOutForm({
   products,
-  customers,
   initialProductId = "",
 }: {
   products: ProductOption[];
-  customers: { id: string; name: string }[];
   initialProductId?: string;
 }) {
   const router = useRouter();
@@ -34,7 +33,7 @@ export function StockOutForm({
   const [productId, setProductId] = useState(initialProductId);
   const selectedProduct = products.find((product) => product.id === productId);
   const available = selectedProduct?.inventory?.quantity ?? 0;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = dateInputValue();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,8 +43,6 @@ export function StockOutForm({
     const payload = {
       productId: String(formData.get("productId") ?? ""),
       quantity: Number(formData.get("quantity")),
-      customerId: String(formData.get("customerId") ?? ""),
-      recipientName: String(formData.get("recipientName") ?? ""),
       occurredAt: String(formData.get("occurredAt") ?? ""),
       referenceNumber: String(formData.get("referenceNumber") ?? ""),
       notes: String(formData.get("notes") ?? ""),
@@ -65,7 +62,7 @@ export function StockOutForm({
       const message =
         error instanceof ApiClientError
           ? Object.values(error.fieldErrors ?? {}).flat()[0] ?? error.message
-          : "Stock could not be removed. Please try again.";
+          : "The sale could not be recorded. Please try again.";
       setErrorMessage(message);
       toast.error(message);
       setLoading(false);
@@ -106,10 +103,9 @@ export function StockOutForm({
           type="number"
           required
           min="1"
-          max={productId ? available : undefined}
           step="1"
-          placeholder="0"
-          hint={productId ? `Maximum available: ${available}` : undefined}
+          placeholder="1"
+          hint={productId ? `Available to sell: ${available}` : undefined}
         />
         <FormField
           label="Date"
@@ -118,23 +114,9 @@ export function StockOutForm({
           required
           defaultValue={today}
         />
-        <SelectField label="Customer" name="customerId">
-          <option value="">No customer selected</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>
-              {customer.name}
-            </option>
-          ))}
-        </SelectField>
-        <FormField
-          label="Recipient"
-          name="recipientName"
-          maxLength={160}
-          placeholder="Optional recipient name"
-        />
         <div className="sm:col-span-2">
           <FormField
-            label="Reference / order number"
+            label="Sale reference"
             name="referenceNumber"
             maxLength={120}
             placeholder="e.g. ORD-2026-001"
@@ -145,11 +127,11 @@ export function StockOutForm({
         label="Notes"
         name="notes"
         maxLength={2000}
-        placeholder="Optional fulfillment notes"
+        placeholder="Optional sale notes"
       />
       <div className="flex justify-end">
         <FormSubmitButton loading={loading} tone="danger">
-          Confirm Stock Out
+          Sell Stock
         </FormSubmitButton>
       </div>
     </form>

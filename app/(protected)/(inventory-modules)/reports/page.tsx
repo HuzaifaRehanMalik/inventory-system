@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import { InventoryModulePlaceholder } from "@/components/inventory-module-placeholder";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Reports & Analytics" };
-export default function ReportsPage() {
-  return <InventoryModulePlaceholder moduleHref="/reports" />;
+import { requireCurrentUser } from "@/lib/auth/session";
+
+export default async function ReportsPage() {
+  await requireCurrentUser("/reports");
+  redirect("/");
 }

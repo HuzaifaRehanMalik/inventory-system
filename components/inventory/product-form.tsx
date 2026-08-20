@@ -20,7 +20,6 @@ type ProductFormValue = {
   categoryId: string | null;
   unitPrice: number;
   minimumStock: number;
-  active: boolean;
 };
 
 export function ProductForm({
@@ -49,8 +48,8 @@ export function ProductForm({
       unitPrice: Number(formData.get("unitPrice")),
       minimumStock: Number(formData.get("minimumStock")),
       ...(product
-        ? { active: formData.get("active") === "on" }
-        : {}),
+        ? {}
+        : { initialQuantity: Number(formData.get("initialQuantity")) }),
     };
 
     try {
@@ -133,16 +132,17 @@ export function ProductForm({
           defaultValue={product?.minimumStock ?? defaultLowStockThreshold}
           hint="Low-stock warnings appear at or below this quantity."
         />
-        {product ? (
-          <label className="flex items-center gap-3 self-end rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-3 text-sm font-semibold text-slate-200">
-            <input
-              type="checkbox"
-              name="active"
-              defaultChecked={product.active}
-              className="size-4 accent-blue-600"
-            />
-            Product is active
-          </label>
+        {!product ? (
+          <FormField
+            label="Initial quantity"
+            name="initialQuantity"
+            type="number"
+            required
+            min="1"
+            step="1"
+            placeholder="1"
+            hint="Opening stock is recorded as received inventory."
+          />
         ) : null}
       </div>
       <TextAreaField
@@ -154,7 +154,7 @@ export function ProductForm({
       />
       <div className="flex justify-end">
         <FormSubmitButton loading={loading}>
-          {product ? "Save product" : "Add product"}
+          {product ? "Save changes" : "Add stock item"}
         </FormSubmitButton>
       </div>
     </form>

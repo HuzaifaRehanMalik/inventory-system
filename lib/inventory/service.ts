@@ -1,8 +1,14 @@
 import "server-only";
 
 import { Prisma } from "@/app/generated/prisma/client";
-import type { InventoryStockStatus } from "@/app/generated/prisma/enums";
 import { AppError } from "@/lib/api/errors";
+import {
+  calculateReceivedQuantity,
+  calculateSoldQuantity,
+  calculateStockStatus,
+  InventoryQuantityError,
+} from "@/lib/inventory/calculations";
+import { logInventoryEvent } from "@/lib/inventory/logging";
 import { prisma } from "@/lib/prisma";
 import type {
   CreateCategoryInput,
@@ -20,17 +26,6 @@ const TRANSACTION_OPTIONS = {
   maxWait: 10_000,
   timeout: 10_000,
 };
-
-function stockStatus(
-  quantity: number,
-  minimumStock: number,
-): InventoryStockStatus {
-  if (quantity === 0) {
-    return "OUT_OF_STOCK";
-  }
-
-  return quantity <= minimumStock ? "LOW_STOCK" : "IN_STOCK";
-}
 
 function errorCode(error: unknown) {
   if (
@@ -50,7 +45,7 @@ async function serializableTransaction<T>(
     try {
       return await prisma.$transaction(operation, TRANSACTION_OPTIONS);
     } catch (error) {
-      if (errorCode(error) === "P2034" && attempt < 2) {
+      if (errorCode(error) === "P2034") {
         continue;
       }
 
@@ -89,10 +84,32 @@ export async function createProduct(
   input: CreateProductInput,
 ) {
   try {
-    return await serializableTransaction(async (transaction) => {
+    const result = await serializableTransaction(async (transaction) => {
       await assertOwnedCategory(transaction, ownerId, input.categoryId);
+      let initialQuantity: number;
 
-      return transaction.product.create({
+      try {
+        initialQuantity = calculateReceivedQuantity(0, input.initialQuantity);
+      } catch (error) {
+        throw quantityAppError(error);
+      }
+
+      const initialStatus = calculateStockStatus(
+        initialQuantity,
+        input.minimumStock,
+      );
+
+      logInventoryEvent({
+        operation: "create_product",
+        stage: "database_operation",
+        userId: ownerId,
+        quantity: initialQuantity,
+        newQuantity: initialQuantity,
+        databaseOperation:
+          "create Product, Inventory, opening InventoryTransaction, and InventoryActivity",
+      });
+
+      const product = await transaction.product.create({
         data: {
           ownerId,
           name: input.name,
@@ -103,23 +120,82 @@ export async function createProduct(
           minimumStock: input.minimumStock,
           inventory: {
             create: {
-              quantity: 0,
+              quantity: initialQuantity,
               averageUnitCost: new Prisma.Decimal(0),
-              status: "OUT_OF_STOCK",
+              status: initialStatus,
             },
           },
+          transactions:
+            initialQuantity > 0
+              ? {
+                  create: {
+                    type: "STOCK_IN",
+                    quantity: initialQuantity,
+                    previousQuantity: 0,
+                    newQuantity: initialQuantity,
+                    unitCost: new Prisma.Decimal(0),
+                    referenceNumber: "OPENING-STOCK",
+                    notes: "Opening quantity recorded when the product was added.",
+                    occurredAt: new Date(),
+                    performedById: ownerId,
+                  },
+                }
+              : undefined,
           activities: {
-            create: {
-              ownerId,
-              performedById: ownerId,
-              type: "PRODUCT_ADDED",
-              message: `${input.name} was added to the product catalog.`,
-            },
+            create: [
+              {
+                ownerId,
+                performedById: ownerId,
+                type: "PRODUCT_ADDED",
+                message: `${input.name} was added to inventory.`,
+              },
+              ...(initialQuantity > 0
+                ? [
+                    {
+                      ownerId,
+                      performedById: ownerId,
+                      type: "STOCK_RECEIVED" as const,
+                      message: `${initialQuantity} opening units of ${input.name} were received.`,
+                    },
+                  ]
+                : []),
+            ],
           },
         },
-        select: { id: true, name: true, sku: true },
+        select: {
+          id: true,
+          name: true,
+          sku: true,
+          inventory: { select: { quantity: true } },
+          transactions: {
+            orderBy: { createdAt: "asc" },
+            take: 1,
+            select: { id: true },
+          },
+        },
       });
+
+      return {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        newQuantity: product.inventory?.quantity ?? initialQuantity,
+        transactionId: product.transactions[0]?.id,
+      };
     });
+
+    logInventoryEvent({
+      operation: "create_product",
+      stage: "database_committed",
+      userId: ownerId,
+      productId: result.id,
+      quantity: input.initialQuantity,
+      newQuantity: result.newQuantity,
+      transactionId: result.transactionId,
+      databaseOperation: "serializable inventory creation transaction",
+    });
+
+    return result;
   } catch (error) {
     if (errorCode(error) === "P2002") {
       throw new AppError(
@@ -141,7 +217,7 @@ export async function updateProduct(
   try {
     return await serializableTransaction(async (transaction) => {
       const product = await transaction.product.findFirst({
-        where: { id: productId, ownerId },
+        where: { id: productId, ownerId, active: true },
         select: {
           id: true,
           name: true,
@@ -165,10 +241,9 @@ export async function updateProduct(
           categoryId: input.categoryId ?? null,
           unitPrice: new Prisma.Decimal(input.unitPrice),
           minimumStock: input.minimumStock,
-          active: input.active,
           inventory: {
             update: {
-              status: stockStatus(quantity, input.minimumStock),
+              status: calculateStockStatus(quantity, input.minimumStock),
             },
           },
           activities: {
@@ -199,7 +274,7 @@ export async function updateProduct(
 }
 
 export async function recordStockIn(ownerId: string, input: StockInInput) {
-  return serializableTransaction(async (transaction) => {
+  const result = await serializableTransaction(async (transaction) => {
     const product = await transaction.product.findFirst({
       where: { id: input.productId, ownerId, active: true },
       select: {
@@ -216,19 +291,15 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
       throw new AppError(404, "PRODUCT_NOT_FOUND", "Product was not found.");
     }
 
-    const supplier = input.supplierId
-      ? await transaction.supplier.findFirst({
-          where: { id: input.supplierId, ownerId, active: true },
-          select: { id: true, name: true },
-        })
-      : null;
+    const previousQuantity = product.inventory.quantity;
+    let newQuantity: number;
 
-    if (input.supplierId && !supplier) {
-      throw new AppError(404, "SUPPLIER_NOT_FOUND", "Supplier was not found.");
+    try {
+      newQuantity = calculateReceivedQuantity(previousQuantity, input.quantity);
+    } catch (error) {
+      throw quantityAppError(error);
     }
 
-    const previousQuantity = product.inventory.quantity;
-    const newQuantity = previousQuantity + input.quantity;
     const purchasePrice = new Prisma.Decimal(input.purchasePrice);
     const previousValue = product.inventory.averageUnitCost.mul(previousQuantity);
     const incomingValue = purchasePrice.mul(input.quantity);
@@ -237,12 +308,27 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
       .div(newQuantity)
       .toDecimalPlaces(2);
 
+    logInventoryEvent({
+      operation: "stock_in",
+      stage: "database_operation",
+      userId: ownerId,
+      productId: product.id,
+      quantity: input.quantity,
+      occurredAt: input.occurredAt.toISOString(),
+      referenceNumber: input.referenceNumber,
+      purchasePrice: input.purchasePrice,
+      previousQuantity,
+      newQuantity,
+      databaseOperation:
+        "update Inventory and create InventoryTransaction and InventoryActivity",
+    });
+
     await transaction.inventory.update({
       where: { productId: product.id },
       data: {
         quantity: newQuantity,
         averageUnitCost,
-        status: stockStatus(newQuantity, product.minimumStock),
+        status: calculateStockStatus(newQuantity, product.minimumStock),
       },
     });
 
@@ -254,8 +340,6 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
         previousQuantity,
         newQuantity,
         unitCost: purchasePrice,
-        supplierId: supplier?.id,
-        counterpartyName: supplier?.name,
         referenceNumber: input.referenceNumber,
         notes: input.notes,
         occurredAt: input.occurredAt,
@@ -278,13 +362,30 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
       transactionId: inventoryTransaction.id,
       productId: product.id,
       productName: product.name,
+      previousQuantity,
       newQuantity,
     };
   });
+
+  logInventoryEvent({
+    operation: "stock_in",
+    stage: "database_committed",
+    userId: ownerId,
+    productId: result.productId,
+    quantity: input.quantity,
+    occurredAt: input.occurredAt.toISOString(),
+    referenceNumber: input.referenceNumber,
+    previousQuantity: result.previousQuantity,
+    newQuantity: result.newQuantity,
+    transactionId: result.transactionId,
+    databaseOperation: "serializable stock receipt transaction",
+  });
+
+  return result;
 }
 
 export async function recordStockOut(ownerId: string, input: StockOutInput) {
-  return serializableTransaction(async (transaction) => {
+  const result = await serializableTransaction(async (transaction) => {
     const product = await transaction.product.findFirst({
       where: { id: input.productId, ownerId, active: true },
       select: {
@@ -302,27 +403,28 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
     }
 
     const available = product.inventory.quantity;
+    let newQuantity: number;
 
-    if (input.quantity > available) {
-      throw new AppError(
-        409,
-        "INSUFFICIENT_STOCK",
-        `Insufficient stock. Only ${available} units are available.`,
-      );
+    try {
+      newQuantity = calculateSoldQuantity(available, input.quantity);
+    } catch (error) {
+      throw quantityAppError(error);
     }
 
-    const customer = input.customerId
-      ? await transaction.customer.findFirst({
-          where: { id: input.customerId, ownerId, active: true },
-          select: { id: true, name: true },
-        })
-      : null;
+    logInventoryEvent({
+      operation: "stock_out",
+      stage: "database_operation",
+      userId: ownerId,
+      productId: product.id,
+      quantity: input.quantity,
+      occurredAt: input.occurredAt.toISOString(),
+      referenceNumber: input.referenceNumber,
+      previousQuantity: available,
+      newQuantity,
+      databaseOperation:
+        "guarded Inventory decrement and create InventoryTransaction and InventoryActivity",
+    });
 
-    if (input.customerId && !customer) {
-      throw new AppError(404, "CUSTOMER_NOT_FOUND", "Customer was not found.");
-    }
-
-    const newQuantity = available - input.quantity;
     const updated = await transaction.inventory.updateMany({
       where: {
         productId: product.id,
@@ -330,7 +432,7 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
       },
       data: {
         quantity: { decrement: input.quantity },
-        status: stockStatus(newQuantity, product.minimumStock),
+        status: calculateStockStatus(newQuantity, product.minimumStock),
       },
     });
 
@@ -342,7 +444,6 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
       );
     }
 
-    const counterpartyName = customer?.name ?? input.recipientName;
     const inventoryTransaction = await transaction.inventoryTransaction.create({
       data: {
         productId: product.id,
@@ -351,8 +452,6 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
         previousQuantity: available,
         newQuantity,
         unitCost: product.inventory.averageUnitCost,
-        customerId: customer?.id,
-        counterpartyName,
         referenceNumber: input.referenceNumber,
         notes: input.notes,
         occurredAt: input.occurredAt,
@@ -367,7 +466,7 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
         performedById: ownerId,
         productId: product.id,
         type: "STOCK_REMOVED",
-        message: `${input.quantity} units of ${product.name} were removed.`,
+        message: `${input.quantity} units of ${product.name} were sold.`,
       },
     ];
 
@@ -390,9 +489,128 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
       transactionId: inventoryTransaction.id,
       productId: product.id,
       productName: product.name,
+      previousQuantity: available,
       newQuantity,
     };
   });
+
+  logInventoryEvent({
+    operation: "stock_out",
+    stage: "database_committed",
+    userId: ownerId,
+    productId: result.productId,
+    quantity: input.quantity,
+    occurredAt: input.occurredAt.toISOString(),
+    referenceNumber: input.referenceNumber,
+    previousQuantity: result.previousQuantity,
+    newQuantity: result.newQuantity,
+    transactionId: result.transactionId,
+    databaseOperation: "serializable stock sale transaction",
+  });
+
+  return result;
+}
+
+export async function deleteProduct(ownerId: string, productId: string) {
+  const result = await serializableTransaction(async (transaction) => {
+    const product = await transaction.product.findFirst({
+      where: { id: productId, ownerId },
+      select: {
+        id: true,
+        name: true,
+        active: true,
+        inventory: { select: { quantity: true } },
+        _count: { select: { transactions: true } },
+      },
+    });
+
+    if (!product) {
+      throw new AppError(404, "PRODUCT_NOT_FOUND", "Product was not found.");
+    }
+
+    if (!product.active) {
+      throw new AppError(
+        409,
+        "PRODUCT_ALREADY_REMOVED",
+        "This product has already been archived.",
+      );
+    }
+
+    const historicalActivityCount = await transaction.inventoryActivity.count({
+      where: {
+        productId: product.id,
+        type: { not: "PRODUCT_ADDED" },
+      },
+    });
+    const hasHistory =
+      product._count.transactions > 0 ||
+      (product.inventory?.quantity ?? 0) > 0 ||
+      historicalActivityCount > 0;
+
+    if (hasHistory) {
+      await transaction.product.update({
+        where: { id: product.id },
+        data: {
+          active: false,
+          activities: {
+            create: {
+              ownerId,
+              performedById: ownerId,
+              type: "PRODUCT_UPDATED",
+              message: `${product.name} was archived to preserve its inventory history.`,
+            },
+          },
+        },
+      });
+
+      return {
+        id: product.id,
+        disposition: "archived" as const,
+        hadHistory: true,
+      };
+    }
+
+    await transaction.inventoryActivity.deleteMany({
+      where: { productId: product.id, type: "PRODUCT_ADDED" },
+    });
+    await transaction.product.delete({ where: { id: product.id } });
+
+    return {
+      id: product.id,
+      disposition: "deleted" as const,
+      hadHistory: false,
+    };
+  });
+
+  logInventoryEvent({
+    operation: "delete_product",
+    stage: "database_committed",
+    userId: ownerId,
+    productId: result.id,
+    deletionDisposition: result.disposition,
+    databaseOperation:
+      result.disposition === "archived"
+        ? "mark Product inactive and preserve inventory history"
+        : "delete history-free Product and empty Inventory",
+  });
+
+  return result;
+}
+
+function quantityAppError(error: unknown) {
+  if (!(error instanceof InventoryQuantityError)) {
+    return error;
+  }
+
+  if (error.code === "INSUFFICIENT_STOCK") {
+    return new AppError(409, error.code, error.message);
+  }
+
+  if (error.code === "QUANTITY_LIMIT_EXCEEDED") {
+    return new AppError(422, error.code, error.message);
+  }
+
+  return new AppError(422, "INVALID_QUANTITY", error.message);
 }
 
 export async function createCategory(

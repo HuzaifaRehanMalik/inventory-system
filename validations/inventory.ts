@@ -1,11 +1,20 @@
 import { z } from "zod";
 
+import { DATABASE_QUANTITY_MAX } from "../lib/inventory/quantity-constraints.mjs";
+
 const optionalId = z
   .string()
   .trim()
   .max(191)
   .optional()
   .transform((value) => value || undefined);
+
+export const productIdSchema = z
+  .string()
+  .trim()
+  .min(1, "Product ID is required.")
+  .max(191, "Product ID is invalid.")
+  .regex(/^c[a-z0-9]{20,}$/, "Product ID is invalid.");
 
 const optionalText = (max: number) =>
   z
@@ -22,7 +31,17 @@ const nonNegativeMoney = z.coerce
   .max(999_999_999_999, "Amount is too large.")
   .transform((value) => Math.round(value * 100) / 100);
 
-export const createProductSchema = z.object({
+const positiveWholeQuantity = (label: string) =>
+  z.coerce
+    .number()
+    .int(`${label} must be a whole number.`)
+    .positive(`${label} must be greater than 0.`)
+    .max(
+      DATABASE_QUANTITY_MAX,
+      `${label} exceeds the database's supported whole-number range.`,
+    );
+
+const productFieldsSchema = z.object({
   name: z
     .string()
     .trim()
@@ -42,34 +61,28 @@ export const createProductSchema = z.object({
     .number()
     .int()
     .min(0, "Minimum stock cannot be negative.")
-    .max(1_000_000_000),
+    .max(DATABASE_QUANTITY_MAX),
 });
 
-export const updateProductSchema = createProductSchema.extend({
-  active: z.boolean().optional(),
+export const createProductSchema = productFieldsSchema.extend({
+  initialQuantity: positiveWholeQuantity("Initial quantity"),
 });
+
+export const updateProductSchema = productFieldsSchema;
 
 const transactionBaseSchema = z.object({
-  productId: z.string().trim().min(1, "Select a product.").max(191),
-  quantity: z.coerce
-    .number()
-    .int()
-    .positive("Quantity must be greater than 0.")
-    .max(1_000_000_000),
+  productId: productIdSchema,
+  quantity: positiveWholeQuantity("Quantity"),
   occurredAt: z.coerce.date(),
   referenceNumber: optionalText(120),
   notes: optionalText(2000),
 });
 
 export const stockInSchema = transactionBaseSchema.extend({
-  supplierId: optionalId,
   purchasePrice: nonNegativeMoney,
 });
 
-export const stockOutSchema = transactionBaseSchema.extend({
-  customerId: optionalId,
-  recipientName: optionalText(160),
-});
+export const stockOutSchema = transactionBaseSchema;
 
 export const createCategorySchema = z.object({
   name: z.string().trim().min(2, "Category name is required.").max(100),
@@ -112,7 +125,7 @@ export const updateBusinessSettingsSchema = z.object({
     .number()
     .int()
     .min(0, "Threshold cannot be negative.")
-    .max(1_000_000_000),
+    .max(DATABASE_QUANTITY_MAX),
   preventNegativeStock: z.boolean().refine((value) => value, {
     message: "Negative stock protection must remain enabled.",
   }),

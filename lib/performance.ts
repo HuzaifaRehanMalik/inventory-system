@@ -2,10 +2,7 @@ type PerformanceValue = boolean | number | string | undefined;
 type PerformanceContext = Record<string, PerformanceValue>;
 
 export function isPerformanceLoggingEnabled() {
-  return (
-    process.env.NODE_ENV !== "production" ||
-    process.env.PERFORMANCE_LOGGING === "true"
-  );
+  return process.env.PERFORMANCE_LOGGING === "true";
 }
 
 export function logPerformance(
@@ -27,14 +24,6 @@ export function startPerformanceTimer(
   name: string,
   context: PerformanceContext = {},
 ) {
-  if (!isPerformanceLoggingEnabled()) {
-    return {
-      end() {
-        return 0;
-      },
-    };
-  }
-
   const startedAt = performance.now();
   let finished = false;
 

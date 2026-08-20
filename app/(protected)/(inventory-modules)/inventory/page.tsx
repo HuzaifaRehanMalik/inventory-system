@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, PackagePlus, Search } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  PackagePlus,
+  PencilLine,
+  Search,
+} from "lucide-react";
 
+import { AppToaster } from "@/components/app-toaster";
+import { DeleteProductButton } from "@/components/inventory/delete-product-button";
 import { EmptyState } from "@/components/inventory/empty-state";
 import { PageHeading } from "@/components/inventory/page-heading";
 import { StockStatusBadge } from "@/components/inventory/stock-status-badge";
@@ -52,7 +60,7 @@ export default async function InventoryPage({
             className="inline-flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-bold text-white shadow-lg shadow-blue-950/30 transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30"
           >
             <PackagePlus className="size-4" />
-            Add Product
+            Add Stock
           </Link>
         }
       />
@@ -108,8 +116,8 @@ export default async function InventoryPage({
       <section className="mt-5">
         {inventory.rows.length ? (
           <>
-            <div className="overflow-x-auto rounded-2xl border border-slate-700 bg-slate-800/75 shadow-xl shadow-slate-950/10">
-              <table className="w-full min-w-[1120px] text-left text-sm">
+            <div className="hidden overflow-x-auto rounded-2xl border border-slate-700 bg-slate-800/75 shadow-xl shadow-slate-950/10 md:block">
+              <table className="w-full min-w-[1260px] text-left text-sm">
                 <thead className="border-b border-slate-700 bg-slate-900/65 text-xs uppercase tracking-wide text-slate-400">
                   <tr>
                     <th className="px-5 py-4 font-bold">Product</th>
@@ -121,6 +129,7 @@ export default async function InventoryPage({
                     <th className="px-5 py-4 text-right font-bold">Minimum</th>
                     <th className="px-5 py-4 font-bold">Status</th>
                     <th className="px-5 py-4 font-bold">Last updated</th>
+                    <th className="px-5 py-4 text-right font-bold">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700/80">
@@ -158,10 +167,91 @@ export default async function InventoryPage({
                       <td className="px-5 py-4 text-xs text-slate-400">
                         {formatDate(row.updatedAt)}
                       </td>
+                      <td className="px-5 py-4">
+                        <div className="flex items-center justify-end gap-1">
+                          <Link
+                            href={`/products/${row.id}`}
+                            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-blue-300 transition hover:bg-blue-500/10 hover:text-blue-200"
+                          >
+                            <PencilLine className="size-3.5" aria-hidden="true" />
+                            Edit
+                          </Link>
+                          <span aria-hidden="true" className="text-slate-600">|</span>
+                          <DeleteProductButton
+                            productId={row.id}
+                            productName={row.name}
+                            hasHistory={row.hasHistory}
+                          />
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="grid gap-4 md:hidden">
+              {inventory.rows.map((row) => (
+                <article
+                  key={row.id}
+                  className="rounded-2xl border border-slate-700 bg-slate-800/75 p-5 shadow-xl shadow-slate-950/10"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <Link
+                        href={`/inventory/${row.id}`}
+                        className="font-bold text-white transition hover:text-blue-300"
+                      >
+                        {row.name}
+                      </Link>
+                      <p className="mt-1 truncate font-mono text-xs text-slate-500">
+                        {row.sku}
+                      </p>
+                    </div>
+                    <StockStatusBadge status={row.status} />
+                  </div>
+                  <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <dt className="text-xs text-slate-500">Category</dt>
+                      <dd className="mt-1 text-slate-200">
+                        {row.category?.name ?? "Uncategorized"}
+                      </dd>
+                    </div>
+                    <div className="text-right">
+                      <dt className="text-xs text-slate-500">Quantity</dt>
+                      <dd className="mt-1 font-bold text-white">
+                        {row.quantity.toLocaleString()}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs text-slate-500">Unit price</dt>
+                      <dd className="mt-1 text-slate-200">
+                        {currencyFormatter.format(row.unitPrice)}
+                      </dd>
+                    </div>
+                    <div className="text-right">
+                      <dt className="text-xs text-slate-500">Inventory value</dt>
+                      <dd className="mt-1 font-semibold text-slate-100">
+                        {currencyFormatter.format(row.totalValue)}
+                      </dd>
+                    </div>
+                  </dl>
+                  <div className="mt-5 flex items-center justify-end gap-1 border-t border-slate-700/80 pt-3">
+                    <Link
+                      href={`/products/${row.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-bold text-blue-300 transition hover:bg-blue-500/10 hover:text-blue-200"
+                    >
+                      <PencilLine className="size-3.5" aria-hidden="true" />
+                      Edit
+                    </Link>
+                    <span aria-hidden="true" className="text-slate-600">|</span>
+                    <DeleteProductButton
+                      productId={row.id}
+                      productName={row.name}
+                      hasHistory={row.hasHistory}
+                    />
+                  </div>
+                </article>
+              ))}
             </div>
             <div className="mt-4 flex flex-col gap-3 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
               <p>
@@ -195,7 +285,7 @@ export default async function InventoryPage({
             description={
               filters.query || filters.category || filters.status !== "ALL"
                 ? "Try changing the search or filters to find other products."
-                : "Add a product to begin tracking your inventory."
+                : "Add a stock item to begin tracking your inventory."
             }
             action={
               <Link
@@ -208,12 +298,13 @@ export default async function InventoryPage({
               >
                 {filters.query || filters.category || filters.status !== "ALL"
                   ? "Clear filters"
-                  : "Add product"}
+                  : "Add stock"}
               </Link>
             }
           />
         )}
       </section>
+      <AppToaster />
     </div>
   );
 }

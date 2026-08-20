@@ -2,6 +2,12 @@ import "server-only";
 
 import { Prisma } from "@/app/generated/prisma/client";
 import type { InventoryStockStatus } from "@/app/generated/prisma/enums";
+import {
+  buildDailyInventoryTrend,
+  buildProductPerformance,
+  type DailyMovementTotal,
+} from "@/lib/inventory/calculations";
+import { logInventoryEvent } from "@/lib/inventory/logging";
 import { prisma } from "@/lib/prisma";
 import type { InventorySearchInput } from "@/validations/inventory";
 
@@ -14,90 +20,156 @@ export const DEFAULT_BUSINESS_SETTINGS = {
 
 const INVENTORY_PAGE_SIZE = 20;
 
-type DashboardInventorySummary = {
-  totalProducts: bigint;
-  totalInventoryQuantity: bigint;
-  lowStockItems: bigint;
-  totalInventoryValue: Prisma.Decimal;
+type DailyMovementSummaryRow = {
+  day: string;
+  type: "STOCK_IN" | "STOCK_OUT";
+  quantity: bigint;
 };
 
 export async function getDashboardData(ownerId: string) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const trendDays = 30;
+  const trendStart = new Date();
+  trendStart.setUTCHours(0, 0, 0, 0);
+  trendStart.setUTCDate(trendStart.getUTCDate() - (trendDays - 1));
 
   const [
     settings,
-    inventorySummaryRows,
-    movementTotals,
-    pendingOrders,
-    recentActivity,
+    products,
+    productMovementTotals,
+    trendRows,
+    recentMovements,
   ] = await Promise.all([
     prisma.businessSettings.findUnique({ where: { userId: ownerId } }),
-    prisma.$queryRaw<DashboardInventorySummary[]>(Prisma.sql`
-      SELECT
-        COUNT(product."id")::bigint AS "totalProducts",
-        COALESCE(SUM(inventory."quantity"), 0)::bigint AS "totalInventoryQuantity",
-        COUNT(*) FILTER (
-          WHERE inventory."status" IN ('LOW_STOCK', 'OUT_OF_STOCK')
-        )::bigint AS "lowStockItems",
-        COALESCE(
-          SUM(inventory."quantity" * inventory."averageUnitCost"),
-          0
-        )::decimal(30, 2) AS "totalInventoryValue"
-      FROM "Product" AS product
-      LEFT JOIN "Inventory" AS inventory
-        ON inventory."productId" = product."id"
-      WHERE product."ownerId" = ${ownerId}
-        AND product."active" = true
-    `),
-    prisma.inventoryTransaction.groupBy({
-      by: ["type"],
-      where: {
-        product: { ownerId },
-        occurredAt: { gte: today },
+    prisma.product.findMany({
+      where: { ownerId, active: true },
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        minimumStock: true,
+        inventory: { select: { quantity: true, status: true } },
       },
+    }),
+    prisma.inventoryTransaction.groupBy({
+      by: ["productId", "type"],
+      where: { product: { ownerId } },
       _sum: { quantity: true },
     }),
-    prisma.order.count({ where: { ownerId, status: "PENDING" } }),
-    prisma.inventoryActivity.findMany({
-      where: { ownerId },
-      orderBy: { createdAt: "desc" },
+    prisma.$queryRaw<DailyMovementSummaryRow[]>(Prisma.sql`
+      SELECT
+        TO_CHAR(
+          DATE_TRUNC('day', movement."occurredAt" AT TIME ZONE 'UTC'),
+          'YYYY-MM-DD'
+        ) AS "day",
+        movement."type" AS "type",
+        SUM(movement."quantity")::bigint AS "quantity"
+      FROM "InventoryTransaction" AS movement
+      INNER JOIN "Product" AS product
+        ON product."id" = movement."productId"
+      WHERE product."ownerId" = ${ownerId}
+        AND movement."occurredAt" >= ${trendStart}
+      GROUP BY "day", movement."type"
+      ORDER BY "day" ASC
+    `),
+    prisma.inventoryTransaction.findMany({
+      where: { product: { ownerId } },
+      orderBy: [{ occurredAt: "desc" }, { createdAt: "desc" }],
       take: 8,
       select: {
         id: true,
         type: true,
-        message: true,
+        quantity: true,
+        previousQuantity: true,
+        newQuantity: true,
+        occurredAt: true,
         createdAt: true,
-        product: { select: { id: true, name: true } },
+        product: { select: { id: true, name: true, sku: true } },
         performedBy: { select: { name: true } },
       },
     }),
   ]);
 
-  const inventorySummary = inventorySummaryRows[0];
-  const movementByType = new Map(
-    movementTotals.map((movement) => [
-      movement.type,
-      movement._sum.quantity ?? 0,
-    ]),
+  const movementByType = productMovementTotals.reduce(
+    (totals, movement) => {
+      totals.set(
+        movement.type,
+        (totals.get(movement.type) ?? 0) + (movement._sum.quantity ?? 0),
+      );
+      return totals;
+    },
+    new Map<"STOCK_IN" | "STOCK_OUT", number>(),
   );
+  const activeProductIds = new Set(products.map((product) => product.id));
+  const productPerformance = buildProductPerformance(
+    products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      sku: product.sku,
+      minimumStock: product.minimumStock,
+      quantity: product.inventory?.quantity ?? 0,
+      status: product.inventory?.status ?? "OUT_OF_STOCK",
+    })),
+    productMovementTotals
+      .filter((movement) => activeProductIds.has(movement.productId))
+      .map((movement) => ({
+        productId: movement.productId,
+        type: movement.type,
+        quantity: movement._sum.quantity ?? 0,
+      })),
+  );
+  const lowStockProducts = productPerformance
+    .filter((product) => product.status !== "IN_STOCK")
+    .sort(
+      (left, right) =>
+        left.quantity - right.quantity || left.name.localeCompare(right.name),
+    );
+  const lowestSellingProducts = [...productPerformance].sort(
+    (left, right) =>
+      left.unitsSold - right.unitsSold || left.name.localeCompare(right.name),
+  );
+  const dailyMovementRows: DailyMovementTotal[] = trendRows.map((row) => ({
+    day: row.day,
+    type: row.type,
+    quantity: Number(row.quantity),
+  }));
 
-  return {
+  const dashboard = {
     settings: settings ?? DEFAULT_BUSINESS_SETTINGS,
     metrics: {
-      totalProducts: Number(inventorySummary?.totalProducts ?? 0),
-      totalInventoryQuantity: Number(
-        inventorySummary?.totalInventoryQuantity ?? 0,
+      totalProducts: products.length,
+      totalInventoryQuantity: productPerformance.reduce(
+        (total, product) => total + product.quantity,
+        0,
       ),
-      lowStockItems: Number(inventorySummary?.lowStockItems ?? 0),
-      totalInventoryValue:
-        inventorySummary?.totalInventoryValue.toNumber() ?? 0,
-      stockInToday: movementByType.get("STOCK_IN") ?? 0,
-      stockOutToday: movementByType.get("STOCK_OUT") ?? 0,
-      pendingOrders,
+      totalUnitsReceived: movementByType.get("STOCK_IN") ?? 0,
+      totalUnitsSold: movementByType.get("STOCK_OUT") ?? 0,
+      lowStockItems: lowStockProducts.length,
     },
-    recentActivity,
+    productPerformance,
+    bestSellingProducts: productPerformance.slice(0, 5),
+    lowestSellingProducts: lowestSellingProducts.slice(0, 5),
+    lowStockProducts: lowStockProducts.slice(0, 8),
+    inventoryTrend: buildDailyInventoryTrend(
+      dailyMovementRows,
+      trendStart,
+      trendDays,
+    ),
+    recentMovements,
   };
+
+  logInventoryEvent({
+    operation: "dashboard_query",
+    stage: "query_succeeded",
+    userId: ownerId,
+    productCount: products.length,
+    rowCount: recentMovements.length,
+    newQuantity: dashboard.metrics.totalInventoryQuantity,
+    databaseOperation:
+      "read products, inventory movements, settings, and dashboard aggregates",
+  });
+
+  return dashboard;
 }
 
 export async function getInventoryPage(
@@ -162,6 +234,12 @@ export async function getInventoryPage(
             updatedAt: true,
           },
         },
+        activities: {
+          where: { type: { not: "PRODUCT_ADDED" } },
+          take: 1,
+          select: { id: true },
+        },
+        _count: { select: { transactions: true } },
       },
     }),
     prisma.category.findMany({
@@ -171,7 +249,7 @@ export async function getInventoryPage(
     }),
   ]);
 
-  return {
+  const inventoryPage = {
     rows: products.map((product) => ({
       id: product.id,
       name: product.name,
@@ -188,6 +266,10 @@ export async function getInventoryPage(
         product.inventory?.status ??
         ("OUT_OF_STOCK" satisfies InventoryStockStatus),
       updatedAt: product.inventory?.updatedAt ?? product.updatedAt,
+      hasHistory:
+        product._count.transactions > 0 ||
+        (product.inventory?.quantity ?? 0) > 0 ||
+        product.activities.length > 0,
     })),
     categories,
     pagination: {
@@ -197,13 +279,24 @@ export async function getInventoryPage(
       totalPages: Math.max(1, Math.ceil(total / INVENTORY_PAGE_SIZE)),
     },
   };
+
+  logInventoryEvent({
+    operation: "inventory_query",
+    stage: "query_succeeded",
+    userId: ownerId,
+    productCount: total,
+    rowCount: inventoryPage.rows.length,
+    databaseOperation: "read filtered inventory products and quantities",
+  });
+
+  return inventoryPage;
 }
 
 export async function getProducts(ownerId: string) {
   return prisma.product
     .findMany({
-      where: { ownerId },
-      orderBy: [{ active: "desc" }, { name: "asc" }],
+      where: { ownerId, active: true },
+      orderBy: { name: "asc" },
       select: {
         id: true,
         name: true,
@@ -213,19 +306,29 @@ export async function getProducts(ownerId: string) {
         active: true,
         category: { select: { name: true } },
         inventory: { select: { quantity: true, status: true } },
+        activities: {
+          where: { type: { not: "PRODUCT_ADDED" } },
+          take: 1,
+          select: { id: true },
+        },
+        _count: { select: { transactions: true } },
       },
     })
     .then((products) =>
-      products.map((product) => ({
+      products.map(({ activities, _count, ...product }) => ({
         ...product,
         unitPrice: product.unitPrice.toNumber(),
+        hasHistory:
+          _count.transactions > 0 ||
+          (product.inventory?.quantity ?? 0) > 0 ||
+          activities.length > 0,
       })),
     );
 }
 
 export async function getProductDetail(ownerId: string, productId: string) {
   const product = await prisma.product.findFirst({
-    where: { id: productId, ownerId },
+    where: { id: productId, ownerId, active: true },
     select: {
       id: true,
       name: true,
@@ -263,15 +366,30 @@ export async function getProductDetail(ownerId: string, productId: string) {
           performedBy: { select: { name: true } },
         },
       },
+      activities: {
+        where: { type: { not: "PRODUCT_ADDED" } },
+        take: 1,
+        select: { id: true },
+      },
+      _count: { select: { transactions: true } },
     },
   });
 
   if (!product) {
+    logInventoryEvent({
+      operation: "inventory_query",
+      stage: "product_not_found",
+      userId: ownerId,
+      productId,
+      rowCount: 0,
+      databaseOperation: "read product inventory and movement history",
+    });
     return null;
   }
 
-  return {
-    ...product,
+  const { activities, _count, ...productFields } = product;
+  const detail = {
+    ...productFields,
     unitPrice: product.unitPrice.toNumber(),
     inventory: product.inventory
       ? {
@@ -283,7 +401,23 @@ export async function getProductDetail(ownerId: string, productId: string) {
       ...transaction,
       unitCost: transaction.unitCost.toNumber(),
     })),
+    hasHistory:
+      _count.transactions > 0 ||
+      (product.inventory?.quantity ?? 0) > 0 ||
+      activities.length > 0,
   };
+
+  logInventoryEvent({
+    operation: "inventory_query",
+    stage: "product_query_succeeded",
+    userId: ownerId,
+    productId,
+    newQuantity: detail.inventory?.quantity ?? 0,
+    rowCount: detail.transactions.length,
+    databaseOperation: "read product inventory and movement history",
+  });
+
+  return detail;
 }
 
 export async function getProductFormData(ownerId: string) {
@@ -305,29 +439,11 @@ export async function getProductFormData(ownerId: string) {
 }
 
 export async function getStockInFormData(ownerId: string) {
-  const [products, suppliers] = await Promise.all([
-    getStockProductOptions(ownerId),
-    prisma.supplier.findMany({
-      where: { ownerId, active: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-  ]);
-
-  return { products, suppliers };
+  return { products: await getStockProductOptions(ownerId) };
 }
 
 export async function getStockOutFormData(ownerId: string) {
-  const [products, customers] = await Promise.all([
-    getStockProductOptions(ownerId),
-    prisma.customer.findMany({
-      where: { ownerId, active: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
-  ]);
-
-  return { products, customers };
+  return { products: await getStockProductOptions(ownerId) };
 }
 
 function getStockProductOptions(ownerId: string) {

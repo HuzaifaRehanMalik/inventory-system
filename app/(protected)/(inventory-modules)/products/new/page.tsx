@@ -8,7 +8,7 @@ import { ProductForm } from "@/components/inventory/product-form";
 import { requireCurrentUser } from "@/lib/auth/session";
 import { getProductFormData } from "@/lib/inventory/queries";
 
-export const metadata: Metadata = { title: "Add product" };
+export const metadata: Metadata = { title: "Add Stock" };
 
 export default async function NewProductPage() {
   const user = await requireCurrentUser("/products/new");
@@ -24,9 +24,9 @@ export default async function NewProductPage() {
         Back to products
       </Link>
       <PageHeading
-        eyebrow="Catalog"
-        title="Add product"
-        description="Create a product record first, then use Stock In to record its opening or incoming quantity."
+        eyebrow="Inventory"
+        title="Add Stock"
+        description="Add a new inventory item and record its validated opening quantity."
       />
       <section className="mt-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-7">
         <ProductForm {...formData} />

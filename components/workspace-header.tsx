@@ -14,7 +14,7 @@ type WorkspaceUser = {
 export function WorkspaceHeader({ user }: { user?: WorkspaceUser }) {
   return (
     <header className="relative sticky top-0 z-30 border-b border-brand-border/80 bg-slate-950/90 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2.5 sm:px-6 lg:px-8">
         <Link
           href="/"
           className="group flex min-w-0 items-center gap-3 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-slate-950"

@@ -29,7 +29,7 @@ export class ApiClientError extends Error {
 export async function apiRequest<T>(
   url: string,
   body?: unknown,
-  method: "POST" | "PATCH" | "GET" = "POST",
+  method: "POST" | "PATCH" | "DELETE" | "GET" = "POST",
 ) {
   const response = await fetch(url, {
     method,

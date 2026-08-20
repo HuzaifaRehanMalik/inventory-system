@@ -84,8 +84,8 @@ Required variables:
 | Variable | Purpose |
 | --- | --- |
 | `DATABASE_URL` | Pooled Neon Postgres URL with `sslmode=verify-full` |
-| `DATABASE_POOL_MAX` | Per-instance PostgreSQL pool cap (defaults to 5 in production) |
-| `PERFORMANCE_LOGGING` | Enables production timing logs while diagnosing (`false` by default) |
+| `DATABASE_POOL_MAX` | Per-instance PostgreSQL pool cap (defaults to 5) |
+| `PERFORMANCE_LOGGING` | Opts in to verbose query/request timing logs (`false` by default) |
 | `AUTH_SECRET` | Auth.js token encryption secret |
 | `AUTH_URL` | Canonical application origin |
 | `APP_URL` | Origin used in transactional email links |

@@ -11,6 +11,7 @@ import {
   TextAreaField,
 } from "@/components/inventory/form-controls";
 import { ApiClientError, apiRequest } from "@/lib/client-api";
+import { dateInputValue } from "@/lib/inventory/date";
 
 type ProductOption = {
   id: string;
@@ -21,17 +22,15 @@ type ProductOption = {
 
 export function StockInForm({
   products,
-  suppliers,
   initialProductId = "",
 }: {
   products: ProductOption[];
-  suppliers: { id: string; name: string }[];
   initialProductId?: string;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const today = new Date().toISOString().slice(0, 10);
+  const today = dateInputValue();
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,7 +40,6 @@ export function StockInForm({
     const payload = {
       productId: String(formData.get("productId") ?? ""),
       quantity: Number(formData.get("quantity")),
-      supplierId: String(formData.get("supplierId") ?? ""),
       purchasePrice: Number(formData.get("purchasePrice")),
       occurredAt: String(formData.get("occurredAt") ?? ""),
       referenceNumber: String(formData.get("referenceNumber") ?? ""),
@@ -62,7 +60,7 @@ export function StockInForm({
       const message =
         error instanceof ApiClientError
           ? Object.values(error.fieldErrors ?? {}).flat()[0] ?? error.message
-          : "Stock could not be received. Please try again.";
+          : "Inventory could not be received. Please try again.";
       setErrorMessage(message);
       toast.error(message);
       setLoading(false);
@@ -102,10 +100,10 @@ export function StockInForm({
           required
           min="1"
           step="1"
-          placeholder="0"
+          placeholder="1"
         />
         <FormField
-          label="Purchase price per unit"
+          label="Unit cost"
           name="purchasePrice"
           type="number"
           required
@@ -113,14 +111,6 @@ export function StockInForm({
           step="0.01"
           placeholder="0.00"
         />
-        <SelectField label="Supplier" name="supplierId">
-          <option value="">No supplier selected</option>
-          {suppliers.map((supplier) => (
-            <option key={supplier.id} value={supplier.id}>
-              {supplier.name}
-            </option>
-          ))}
-        </SelectField>
         <FormField
           label="Date"
           name="occurredAt"
@@ -130,7 +120,7 @@ export function StockInForm({
         />
         <div className="sm:col-span-2">
           <FormField
-            label="Reference / invoice number"
+            label="Reference number"
             name="referenceNumber"
             maxLength={120}
             placeholder="e.g. INV-2026-001"
@@ -144,7 +134,7 @@ export function StockInForm({
         placeholder="Optional receiving notes"
       />
       <div className="flex justify-end">
-        <FormSubmitButton loading={loading}>Confirm Stock In</FormSubmitButton>
+        <FormSubmitButton loading={loading}>Receive Stock</FormSubmitButton>
       </div>
     </form>
   );

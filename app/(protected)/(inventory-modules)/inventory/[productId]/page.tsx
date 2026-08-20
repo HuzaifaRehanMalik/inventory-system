@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import { AppToaster } from "@/components/app-toaster";
+import { DeleteProductButton } from "@/components/inventory/delete-product-button";
 import { PageHeading } from "@/components/inventory/page-heading";
 import { StockStatusBadge } from "@/components/inventory/stock-status-badge";
 import { requireCurrentUser } from "@/lib/auth/session";
@@ -64,13 +65,13 @@ export default async function InventoryDetailPage({
               href={`/stock-in?product=${product.id}`}
               className="inline-flex h-10 items-center gap-2 rounded-xl bg-blue-600 px-3.5 text-sm font-bold text-white hover:bg-blue-500"
             >
-              <ArrowDownToLine className="size-4" /> Stock In
+              <ArrowDownToLine className="size-4" /> Receive Stock
             </Link>
             <Link
               href={`/stock-out?product=${product.id}`}
               className="inline-flex h-10 items-center gap-2 rounded-xl border border-rose-400/25 bg-rose-500/10 px-3.5 text-sm font-bold text-rose-200 hover:bg-rose-500/15"
             >
-              <ArrowUpFromLine className="size-4" /> Stock Out
+              <ArrowUpFromLine className="size-4" /> Sell Stock
             </Link>
             <Link
               href={`/products/${product.id}`}
@@ -78,6 +79,12 @@ export default async function InventoryDetailPage({
             >
               <PencilLine className="size-4" /> Edit
             </Link>
+            <DeleteProductButton
+              productId={product.id}
+              productName={product.name}
+              hasHistory={product.hasHistory}
+              redirectTo="/inventory"
+            />
           </>
         }
       />
@@ -112,7 +119,7 @@ export default async function InventoryDetailPage({
             Stock history
           </h2>
           <p className="mt-1 text-sm text-slate-400">
-            Up to 50 of the most recent inventory movements for this product.
+            Up to 50 of the most recent sales and receipts for this product.
           </p>
         </div>
         {product.transactions.length ? (
@@ -148,7 +155,7 @@ export default async function InventoryDetailPage({
                             : "border-rose-400/20 bg-rose-400/10 text-rose-300"
                         }`}
                       >
-                        {transaction.type === "STOCK_IN" ? "Stock In" : "Stock Out"}
+                        {transaction.type === "STOCK_IN" ? "Received" : "Sold"}
                       </span>
                     </td>
                     <td className="px-5 py-4 text-right font-bold text-white">

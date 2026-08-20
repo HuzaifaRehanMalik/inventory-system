@@ -14,8 +14,12 @@ export default async function HomePage() {
     <HomeOverview
       firstName={user.name.split(" ")[0]}
       metrics={dashboard.metrics}
-      recentActivity={dashboard.recentActivity}
-      currency={dashboard.settings.currency}
+      productPerformance={dashboard.productPerformance}
+      bestSellingProducts={dashboard.bestSellingProducts}
+      lowestSellingProducts={dashboard.lowestSellingProducts}
+      lowStockProducts={dashboard.lowStockProducts}
+      inventoryTrend={dashboard.inventoryTrend}
+      recentMovements={dashboard.recentMovements}
     />
   );
 }

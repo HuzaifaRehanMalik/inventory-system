@@ -248,7 +248,7 @@ model InventoryTransaction {
   notes            String?                  @db.VarChar(2000)
   occurredAt       DateTime
   performedById    String
-  product          Product                  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product          Product                  @relation(fields: [productId], references: [id], onDelete: Restrict)
   supplier         Supplier?                @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   customer         Customer?                @relation(fields: [customerId], references: [id], onDelete: SetNull)
   performedBy      User                     @relation("InventoryTransactionPerformer", fields: [performedById], references: [id], onDelete: Restrict)
@@ -270,7 +270,7 @@ model InventoryActivity {
   message       String                @db.VarChar(500)
   owner         User                  @relation("InventoryActivityOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   performedBy   User                  @relation("InventoryActivityPerformer", fields: [performedById], references: [id], onDelete: Cascade)
-  product       Product?              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product       Product?              @relation(fields: [productId], references: [id], onDelete: SetNull)
   createdAt     DateTime              @default(now())
 
   @@index([ownerId, createdAt])
