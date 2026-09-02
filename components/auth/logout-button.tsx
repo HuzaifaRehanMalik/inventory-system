@@ -32,8 +32,8 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
         onClick={logout}
         disabled={loading}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800 text-sm font-semibold text-slate-200 transition hover:border-blue-400/40 hover:bg-slate-700 hover:text-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 disabled:opacity-60",
-          compact ? "size-10" : "h-10 px-4",
+          "inline-flex items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50",
+          compact ? "size-10" : "h-9 px-3",
         )}
         aria-label={compact ? "Sign out" : undefined}
         aria-describedby={error ? "logout-error" : undefined}
@@ -49,7 +49,7 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
         <p
           id="logout-error"
           role="alert"
-          className="absolute right-0 top-full z-50 mt-2 w-56 rounded-xl border border-rose-400/20 bg-slate-950 p-3 text-xs font-medium leading-5 text-rose-200 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-2 w-56 rounded-md border border-red-500/20 bg-zinc-950 p-3 text-xs font-medium leading-5 text-red-400 shadow-md"
         >
           Could not sign out. Please try again.
         </p>

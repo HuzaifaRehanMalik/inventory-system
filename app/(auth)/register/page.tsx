@@ -13,15 +13,26 @@ export default function RegisterPage() {
       title="Create your account"
       description="Set up a verified identity for secure access to Stockeyfy."
       footer={
-        <>
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="font-bold text-blue-400 transition hover:text-blue-300 hover:underline"
-          >
-            Sign in
-          </Link>
-        </>
+        <div className="space-y-2">
+          <p>
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-emerald-400 transition hover:text-emerald-300 hover:underline"
+            >
+              Sign in
+            </Link>
+          </p>
+          <p>
+            Want a quick tour first?{" "}
+            <Link
+              href="/guide"
+              className="font-medium text-emerald-400 transition hover:text-emerald-300 hover:underline"
+            >
+              Read the User Guide
+            </Link>
+          </p>
+        </div>
       }
     >
       <RegisterForm />

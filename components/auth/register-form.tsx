@@ -84,7 +84,7 @@ export function RegisterForm() {
         error={form.formState.errors.confirmPassword?.message}
         {...form.register("confirmPassword")}
       />
-      <p className="text-xs leading-5 text-slate-400">
+      <p className="text-xs leading-5 text-zinc-400">
         By creating an account, you agree to follow your organization’s access
         and security policies.
       </p>

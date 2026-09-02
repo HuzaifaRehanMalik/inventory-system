@@ -12,12 +12,12 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/35 px-6 py-12 text-center">
-      <span className="mx-auto grid size-12 place-items-center rounded-2xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
+    <div className="border border-zinc-800 bg-zinc-900/50 rounded-lg p-6 text-center">
+      <span className="mx-auto grid size-12 place-items-center rounded-lg border border-emerald-500/15 bg-emerald-500/10 text-emerald-400">
         {icon}
       </span>
-      <h2 className="mt-4 text-base font-bold text-white">{title}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+      <h2 className="mt-4 text-sm font-medium text-zinc-300">{title}</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-zinc-500">
         {description}
       </p>
       {action ? <div className="mt-5">{action}</div> : null}

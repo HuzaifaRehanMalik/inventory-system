@@ -62,13 +62,13 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
       {errorMessage ? (
         <p
           role="alert"
-          className="rounded-xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200"
+          className="rounded-md border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
         >
           {errorMessage}
         </p>
       ) : null}
       <section aria-labelledby="general-settings-heading">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">
           General
         </p>
         <h2 id="general-settings-heading" className="mt-1 text-lg font-bold text-white">
@@ -105,10 +105,10 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
       </section>
 
       <section
-        className="border-t border-slate-700 pt-8"
+        className="border-t border-zinc-800 pt-8"
         aria-labelledby="inventory-settings-heading"
       >
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">
           Inventory
         </p>
         <h2 id="inventory-settings-heading" className="mt-1 text-lg font-bold text-white">
@@ -125,7 +125,7 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
             defaultValue={settings.defaultLowStockThreshold}
             hint="Used as the starting threshold for new products."
           />
-          <div className="flex items-start gap-3 rounded-xl border border-slate-700 bg-slate-900/50 p-4 text-sm text-slate-300">
+          <div className="flex items-start gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-300">
             <span
               aria-hidden="true"
               className="mt-0.5 grid size-4 place-items-center rounded-full bg-emerald-500 text-[10px] font-black text-white"
@@ -136,7 +136,7 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
               <span className="block font-bold text-white">
                 Negative stock protection enabled
               </span>
-              <span className="mt-1 block text-xs leading-5 text-slate-400">
+              <span className="mt-1 block text-xs leading-5 text-zinc-400">
                 Stock Out is always rejected when the requested quantity is not
                 available.
               </span>
@@ -145,7 +145,7 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
         </div>
       </section>
 
-      <div className="flex justify-end border-t border-slate-700 pt-6">
+      <div className="flex justify-end border-t border-zinc-800 pt-6">
         <FormSubmitButton loading={loading}>Save settings</FormSubmitButton>
       </div>
     </form>

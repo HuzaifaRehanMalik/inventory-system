@@ -78,13 +78,13 @@ export function DirectoryCreateForm({ kind }: { kind: DirectoryKind }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-6"
+      className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6"
     >
       <h2 className="text-base font-bold text-white">
         {details.submitLabel}
       </h2>
       {errorMessage ? (
-        <p className="mt-4 text-sm text-rose-300" role="alert">
+        <p className="mt-4 text-sm text-red-300" role="alert">
           {errorMessage}
         </p>
       ) : null}

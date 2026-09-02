@@ -15,19 +15,19 @@ export default async function ProfilePage() {
   return (
     <>
       <div className="animate-enter grid gap-6 lg:grid-cols-[1fr_320px]">
-        <section className="rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-xl shadow-slate-950/20 sm:p-8">
-          <p className="text-sm font-semibold text-blue-400">Identity</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-white">
+        <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+          <p className="text-xs font-medium text-zinc-500">Identity</p>
+          <h1 className="mt-1 text-xl font-semibold tracking-tight text-white">
             Profile details
           </h1>
-          <p className="mt-2 mb-7 text-sm leading-6 text-slate-300">
+          <p className="mt-2 text-sm text-zinc-400 mb-6">
             Keep your account information accurate and current.
           </p>
           <ProfileForm name={user.name} email={user.email} />
         </section>
 
         <aside className="space-y-5">
-          <section className="rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-xl shadow-slate-950/20">
+          <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
             <h2 className="font-bold text-white">Account status</h2>
             <dl className="mt-5 space-y-4">
             <StatusRow
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
 
           <Link
             href="/change-password"
-            className="flex items-center justify-between rounded-2xl border border-blue-400/20 bg-blue-500/10 p-5 text-sm font-bold text-blue-200 transition hover:-translate-y-0.5 hover:border-blue-400/40 hover:bg-blue-500/15 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20"
+            className="flex items-center justify-between rounded-md border border-zinc-700 bg-zinc-800 p-3 text-sm font-medium text-zinc-200 hover:bg-zinc-700 hover:text-white transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
           >
             Change password
             <KeyRound className="size-4" />
@@ -81,12 +81,12 @@ function StatusRow({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="grid size-8 place-items-center rounded-lg border border-slate-700 bg-slate-900/70 text-blue-300">
+      <span className="grid size-8 place-items-center rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700/50">
         {icon}
       </span>
       <div>
-        <dt className="text-xs text-slate-400">{label}</dt>
-        <dd className="text-sm font-semibold text-white">
+        <dt className="text-xs text-zinc-500">{label}</dt>
+        <dd className="text-sm font-medium text-zinc-200">
           {value}
         </dd>
       </div>

@@ -35,7 +35,7 @@ export default async function EditProductPage({
     <div className="animate-enter mx-auto max-w-4xl">
       <Link
         href={`/inventory/${product.id}`}
-        className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition hover:text-blue-300"
+        className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-emerald-400"
       >
         <ArrowLeft className="size-4" />
         Back to inventory details
@@ -45,7 +45,7 @@ export default async function EditProductPage({
         title={`Edit ${product.name}`}
         description="Update product information and the threshold used to calculate its stock status."
       />
-      <section className="mt-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-7">
+      <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
         <ProductForm
           categories={formData.categories}
           defaultLowStockThreshold={formData.defaultLowStockThreshold}
@@ -60,9 +60,9 @@ export default async function EditProductPage({
           }}
         />
       </section>
-      <section className="mt-6 rounded-2xl border border-rose-400/20 bg-slate-800/60 p-5 sm:p-7">
-        <h2 className="text-base font-bold text-white">Delete stock item</h2>
-        <p className="mt-1 mb-4 text-sm leading-6 text-slate-400">
+      <section className="mt-6 rounded-lg border border-red-500/20 bg-zinc-900 p-4 sm:p-6">
+        <h2 className="text-base font-semibold text-white">Delete stock item</h2>
+        <p className="mt-1 mb-4 text-sm leading-6 text-zinc-400">
           Safely remove this item from active inventory while retaining its
           historical stock movements.
         </p>

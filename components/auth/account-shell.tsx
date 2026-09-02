@@ -18,7 +18,7 @@ export function AccountShell({
   return (
     <div className="min-h-screen bg-background text-foreground">
       <WorkspaceHeader user={user} />
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

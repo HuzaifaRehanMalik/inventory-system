@@ -27,12 +27,12 @@ export default async function ResetPasswordPage({
         description="This link is missing or malformed. Request a fresh password reset email."
       >
         <div className="text-center">
-          <span className="mx-auto grid size-14 place-items-center rounded-2xl border border-amber-400/20 bg-amber-400/10 text-amber-300">
+          <span className="mx-auto grid size-12 place-items-center rounded-md bg-amber-500/10 text-amber-400">
             <AlertTriangle className="size-7" />
           </span>
           <Link
             href="/forgot-password"
-            className="mt-6 inline-flex h-11 items-center justify-center rounded-xl bg-blue-600 px-5 text-sm font-bold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30"
+            className="mt-6 inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
           >
             Request a new link
           </Link>

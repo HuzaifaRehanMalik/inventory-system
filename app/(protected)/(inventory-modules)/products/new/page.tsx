@@ -18,7 +18,7 @@ export default async function NewProductPage() {
     <div className="animate-enter mx-auto max-w-4xl">
       <Link
         href="/products"
-        className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-400 transition hover:text-blue-300"
+        className="mb-5 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-emerald-400"
       >
         <ArrowLeft className="size-4" />
         Back to products
@@ -28,7 +28,7 @@ export default async function NewProductPage() {
         title="Add Stock"
         description="Add a new inventory item and record its validated opening quantity."
       />
-      <section className="mt-8 rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-7">
+      <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
         <ProductForm {...formData} />
       </section>
       <AppToaster />

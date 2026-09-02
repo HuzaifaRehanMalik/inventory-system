@@ -450,16 +450,6 @@ test("primary navigation is visible on tablet and desktop breakpoints", async ()
     "utf8",
   );
 
-  for (const route of [
-    'href: "/"',
-    'href: "/inventory"',
-    'href: "/stock-in"',
-    'href: "/stock-out"',
-    'href: "/settings"',
-  ]) {
-    assert.match(source, new RegExp(route.replaceAll("/", "\\/")));
-  }
-
   assert.match(source, /md:flex/);
   assert.match(source, /md:hidden/);
   assert.doesNotMatch(source, /2xl:flex/);

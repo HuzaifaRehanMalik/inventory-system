@@ -70,7 +70,7 @@ export function VerifyEmailPanel({ token }: { token?: string }) {
   if (state === "success") {
     return (
       <StatusPanel
-        icon={<BadgeCheck className="size-8" />}
+        icon={<BadgeCheck className="size-8 text-emerald-400" />}
         title="Email verified"
         message={message}
         tone="success"
@@ -78,7 +78,7 @@ export function VerifyEmailPanel({ token }: { token?: string }) {
         <button
           type="button"
           onClick={() => router.replace("/login?verified=1")}
-          className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30"
+          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
         >
           Continue to sign in
         </button>
@@ -96,17 +96,17 @@ export function VerifyEmailPanel({ token }: { token?: string }) {
           tone="error"
         />
       ) : (
-        <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4 text-sm leading-6 text-blue-100">
+        <div className="rounded-md border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm leading-6 text-emerald-100">
           Enter your account email and we’ll send a fresh verification link if
           one is needed.
         </div>
       )}
       <ResendVerificationForm />
-      <p className="text-center text-sm text-slate-400">
+      <p className="text-center text-sm text-zinc-400">
         Already verified?{" "}
         <Link
           href="/login"
-          className="font-semibold text-blue-400 transition hover:text-blue-300 hover:underline"
+          className="font-semibold text-emerald-400 transition hover:text-emerald-300 hover:underline"
         >
           Sign in
         </Link>
@@ -173,10 +173,10 @@ function StatusPanel({
   return (
     <div className="text-center" role={tone === "error" ? "alert" : "status"}>
       <span
-        className={`mx-auto grid size-14 place-items-center rounded-2xl ${
+        className={`mx-auto grid size-14 place-items-center rounded-md ${
           tone === "error"
-            ? "border border-rose-400/20 bg-rose-400/10 text-rose-300"
-            : "border border-blue-400/20 bg-blue-500/15 text-blue-300"
+            ? "border border-red-500/20 bg-red-500/10 text-red-400"
+            : "border border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
         }`}
       >
         {icon}
@@ -184,7 +184,7 @@ function StatusPanel({
       <h2 className="mt-4 text-lg font-bold text-white">
         {title}
       </h2>
-      <p className="mt-1 text-sm leading-6 text-slate-300">
+      <p className="mt-1 text-sm leading-6 text-zinc-400">
         {message}
       </p>
       {children}

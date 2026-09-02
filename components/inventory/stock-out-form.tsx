@@ -74,12 +74,12 @@ export function StockOutForm({
       {errorMessage ? (
         <p
           role="alert"
-          className="rounded-xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200"
+          className="rounded-md border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
         >
           {errorMessage}
         </p>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
         <div className="sm:col-span-2">
           <SelectField
             label="Product"
@@ -123,12 +123,14 @@ export function StockOutForm({
           />
         </div>
       </div>
-      <TextAreaField
-        label="Notes"
-        name="notes"
-        maxLength={2000}
-        placeholder="Optional sale notes"
-      />
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+        <TextAreaField
+          label="Notes"
+          name="notes"
+          maxLength={2000}
+          placeholder="Optional sale notes"
+        />
+      </div>
       <div className="flex justify-end">
         <FormSubmitButton loading={loading} tone="danger">
           Sell Stock

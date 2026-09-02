@@ -77,12 +77,12 @@ export function ProductForm({
       {errorMessage ? (
         <p
           role="alert"
-          className="rounded-xl border border-rose-400/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200"
+          className="rounded-md border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200"
         >
           {errorMessage}
         </p>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-5 sm:grid-cols-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
         <FormField
           label="Product name"
           name="name"
@@ -145,13 +145,15 @@ export function ProductForm({
           />
         ) : null}
       </div>
-      <TextAreaField
-        label="Description"
-        name="description"
-        maxLength={1000}
-        defaultValue={product?.description ?? ""}
-        placeholder="Optional product details"
-      />
+      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+        <TextAreaField
+          label="Description"
+          name="description"
+          maxLength={1000}
+          defaultValue={product?.description ?? ""}
+          placeholder="Optional product details"
+        />
+      </div>
       <div className="flex justify-end">
         <FormSubmitButton loading={loading}>
           {product ? "Save changes" : "Add stock item"}

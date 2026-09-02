@@ -87,7 +87,7 @@ export function LoginForm({
         labelAction={
           <Link
             href="/forgot-password"
-            className="text-xs font-semibold text-blue-400 transition hover:text-blue-300 hover:underline"
+            className="text-xs font-semibold text-emerald-400 transition hover:text-emerald-300 hover:underline"
           >
             Forgot password?
           </Link>
@@ -98,14 +98,14 @@ export function LoginForm({
         {...form.register("password")}
       />
 
-      <label className="flex cursor-pointer items-start gap-3 text-sm text-slate-400">
+      <label className="flex cursor-pointer items-start gap-3 text-sm text-zinc-400">
         <input
           type="checkbox"
-          className="mt-0.5 size-4 rounded border-slate-600 accent-blue-600 focus:ring-blue-500"
+          className="mt-0.5 size-4 rounded border-zinc-700 accent-emerald-500 focus:ring-emerald-500 bg-zinc-900"
           {...form.register("rememberMe")}
         />
         <span>
-          <span className="font-semibold text-slate-200">
+          <span className="font-semibold text-zinc-300">
             Remember me
           </span>
           <span className="block text-xs leading-5">

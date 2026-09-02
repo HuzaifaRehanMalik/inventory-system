@@ -99,11 +99,11 @@ export function HomeOverview({
     <div className="animate-enter">
       <section className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-accent">Inventory analytics</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          <p className="text-xs font-medium text-zinc-500">Inventory analytics</p>
+          <h1 className="mt-1 text-xl font-semibold tracking-tight text-white">
             Welcome back, {firstName}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
             See which products are selling, which are underperforming, and where
             current stock needs attention.
           </p>
@@ -123,10 +123,10 @@ export function HomeOverview({
 
       <section className="mt-8" aria-labelledby="inventory-summary-heading">
         <div className="mb-4">
-          <h2 id="inventory-summary-heading" className="text-base font-bold text-white">
+          <h2 id="inventory-summary-heading" className="text-sm font-semibold text-white">
             Inventory summary
           </h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-xs text-zinc-500">
             Lifetime movement totals and live stock levels from the database.
           </p>
         </div>
@@ -179,10 +179,10 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-4 ${
+      className={`inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 ${
         secondary
-          ? "border border-slate-600 bg-slate-800 text-slate-100 hover:border-blue-400/40 hover:text-blue-200 focus-visible:ring-blue-500/20"
-          : "bg-blue-600 text-white shadow-lg shadow-blue-950/30 hover:bg-blue-500 focus-visible:ring-blue-500/30"
+          ? "border border-zinc-700 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white"
+          : "bg-primary text-white hover:bg-primary-hover"
       }`}
     >
       <Icon className="size-4" aria-hidden="true" />
@@ -205,26 +205,26 @@ function SummaryCard({
   tone: "primary" | "accent" | "warning" | "success";
 }) {
   const tones = {
-    primary: "border-blue-400/20 bg-blue-500/12 text-blue-300",
-    accent: "border-sky-400/20 bg-sky-400/10 text-sky-300",
-    warning: "border-amber-400/20 bg-amber-400/10 text-amber-300",
-    success: "border-emerald-400/20 bg-emerald-400/10 text-emerald-300",
+    primary: "bg-emerald-500/10 text-emerald-400",
+    accent: "bg-sky-500/10 text-sky-400",
+    warning: "bg-amber-500/10 text-amber-400",
+    success: "bg-green-500/10 text-green-400",
   };
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-surface/80 p-4 shadow-lg shadow-slate-950/10 sm:p-5">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <dt className="text-xs font-semibold text-slate-400">{label}</dt>
-          <dd className="mt-1 text-2xl font-bold tracking-tight text-white">
+          <dt className="text-xs font-medium text-zinc-500">{label}</dt>
+          <dd className="mt-1 text-2xl font-semibold tracking-tight text-white">
             {value.toLocaleString()}
           </dd>
         </div>
-        <span className={`grid size-9 place-items-center rounded-xl border ${tones[tone]}`}>
+        <span className={`grid size-8 place-items-center rounded-md ${tones[tone]}`}>
           <Icon className="size-4" aria-hidden="true" />
         </span>
       </div>
-      <p className="mt-3 text-xs text-slate-500">{note}</p>
+      <p className="mt-3 text-xs text-zinc-600">{note}</p>
     </div>
   );
 }
@@ -236,26 +236,26 @@ function MovementChart({ data }: { data: DailyInventoryTrend[] }) {
   );
 
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/75 p-5 shadow-xl shadow-slate-950/10 sm:p-6">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-white">Sales trend & inventory movement</h2>
-          <p className="mt-1 text-sm text-slate-400">
+          <h2 className="text-sm font-semibold text-white">Sales trend & inventory movement</h2>
+          <p className="mt-1 text-xs text-zinc-500">
             Daily units sold versus received over the last 30 days.
           </p>
         </div>
-        <div className="flex gap-4 text-xs font-semibold text-slate-400">
+        <div className="flex gap-4 text-xs text-zinc-500">
           <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-blue-400" /> Sold
+            <span className="size-2 rounded-sm bg-emerald-400" /> Sold
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm bg-emerald-400" /> Received
+            <span className="size-2 rounded-sm bg-zinc-600" /> Received
           </span>
         </div>
       </div>
       <div className="mt-6 overflow-x-auto pb-7">
         <div
-          className="grid h-56 min-w-[620px] grid-cols-[repeat(30,minmax(12px,1fr))] items-end gap-1 border-b border-slate-600 px-1"
+          className="grid h-56 min-w-[620px] grid-cols-[repeat(30,minmax(12px,1fr))] items-end gap-1 border-b border-zinc-700 px-1"
           role="img"
           aria-label="Thirty-day chart comparing units sold and received"
         >
@@ -266,15 +266,15 @@ function MovementChart({ data }: { data: DailyInventoryTrend[] }) {
               title={`${formatDay(day.day)}: ${day.unitsSold} sold, ${day.unitsReceived} received, net ${day.netMovement}`}
             >
               <span
-                className="w-1/2 min-w-1 rounded-t bg-blue-400/90 transition group-hover:bg-blue-300"
+                className="w-1/2 min-w-1 rounded-t bg-emerald-400/80 transition group-hover:bg-emerald-400"
                 style={{ height: `${Math.max(1, (day.unitsSold / maximum) * 100)}%` }}
               />
               <span
-                className="w-1/2 min-w-1 rounded-t bg-emerald-400/85 transition group-hover:bg-emerald-300"
+                className="w-1/2 min-w-1 rounded-t bg-zinc-600 transition group-hover:bg-zinc-500"
                 style={{ height: `${Math.max(1, (day.unitsReceived / maximum) * 100)}%` }}
               />
               {index % 5 === 0 || index === data.length - 1 ? (
-                <span className="absolute -bottom-6 whitespace-nowrap text-[10px] text-slate-500">
+                <span className="absolute -bottom-6 whitespace-nowrap text-[10px] text-zinc-600">
                   {formatShortDay(day.day)}
                 </span>
               ) : null}
@@ -288,26 +288,26 @@ function MovementChart({ data }: { data: DailyInventoryTrend[] }) {
 
 function LowStockPanel({ products }: { products: ProductPerformance[] }) {
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/75 p-5 shadow-xl shadow-slate-950/10 sm:p-6">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-white">Low stock products</h2>
-          <p className="mt-1 text-sm text-slate-400">Current levels needing attention.</p>
+          <h2 className="text-sm font-semibold text-white">Low stock products</h2>
+          <p className="mt-1 text-xs text-zinc-500">Current levels needing attention.</p>
         </div>
-        <TriangleAlert className="size-5 text-amber-300" aria-hidden="true" />
+        <TriangleAlert className="size-5 text-amber-400" aria-hidden="true" />
       </div>
       {products.length ? (
-        <ul className="mt-5 divide-y divide-slate-700/80">
+        <ul className="mt-5 divide-y divide-zinc-800">
           {products.map((product) => (
             <li key={product.id} className="flex items-center justify-between gap-3 py-3 first:pt-0">
               <div className="min-w-0">
                 <Link
                   href={`/inventory/${product.id}`}
-                  className="truncate text-sm font-bold text-white hover:text-blue-300"
+                  className="truncate text-sm font-medium text-white hover:text-emerald-400"
                 >
                   {product.name}
                 </Link>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-zinc-500">
                   {product.quantity.toLocaleString()} available · minimum {product.minimumStock.toLocaleString()}
                 </p>
               </div>
@@ -316,7 +316,7 @@ function LowStockPanel({ products }: { products: ProductPerformance[] }) {
           ))}
         </ul>
       ) : (
-        <p className="mt-6 rounded-xl border border-emerald-400/15 bg-emerald-400/5 p-4 text-sm text-emerald-200">
+        <p className="mt-6 rounded-md border border-emerald-500/15 bg-emerald-500/5 p-3 text-sm text-emerald-300">
           All active products are above their low-stock thresholds.
         </p>
       )}
@@ -338,38 +338,38 @@ function RankingPanel({
   emptyMessage: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-700 bg-slate-800/75 p-5 sm:p-6">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="grid size-9 place-items-center rounded-xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
+        <span className="grid size-8 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
           <Icon className="size-4" aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-base font-bold text-white">{title}</h2>
-          <p className="mt-1 text-sm text-slate-400">{description}</p>
+          <h2 className="text-sm font-semibold text-white">{title}</h2>
+          <p className="mt-1 text-xs text-zinc-500">{description}</p>
         </div>
       </div>
       {products.length ? (
         <ol className="mt-5 space-y-2">
           {products.map((product, index) => (
-            <li key={product.id} className="flex items-center gap-3 rounded-xl bg-slate-900/45 px-3 py-3">
-              <span className="grid size-7 place-items-center rounded-lg bg-slate-700 text-xs font-bold text-slate-300">
+            <li key={product.id} className="flex items-center gap-3 rounded-md bg-zinc-800/50 px-3 py-2.5">
+              <span className="grid size-7 place-items-center rounded bg-zinc-700 text-xs font-bold text-zinc-300">
                 {index + 1}
               </span>
               <div className="min-w-0 flex-1">
-                <Link href={`/inventory/${product.id}`} className="block truncate text-sm font-bold text-white hover:text-blue-300">
+                <Link href={`/inventory/${product.id}`} className="block truncate text-sm font-medium text-white hover:text-emerald-400">
                   {product.name}
                 </Link>
-                <p className="text-xs text-slate-500">{product.sku}</p>
+                <p className="text-xs text-zinc-500">{product.sku}</p>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-white">{product.unitsSold.toLocaleString()}</p>
-                <p className="text-[11px] text-slate-500">units sold</p>
+                <p className="text-sm font-semibold text-white">{product.unitsSold.toLocaleString()}</p>
+                <p className="text-[11px] text-zinc-500">units sold</p>
               </div>
             </li>
           ))}
         </ol>
       ) : (
-        <p className="mt-5 text-sm text-slate-500">{emptyMessage}</p>
+        <p className="mt-5 text-sm text-zinc-500">{emptyMessage}</p>
       )}
     </div>
   );
@@ -379,47 +379,47 @@ function PerformanceTable({ products }: { products: ProductPerformance[] }) {
   return (
     <section className="mt-8" aria-labelledby="performance-heading">
       <div className="mb-4">
-        <h2 id="performance-heading" className="text-base font-bold text-white">
+        <h2 id="performance-heading" className="text-sm font-semibold text-white">
           Product performance comparison
         </h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-xs text-zinc-500">
           Compare sales, receipts, sell-through, and current stock for every active product.
         </p>
       </div>
       {products.length ? (
-        <div className="overflow-x-auto rounded-2xl border border-slate-700 bg-slate-800/75">
+        <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900">
           <table className="w-full min-w-[840px] text-left text-sm">
-            <thead className="border-b border-slate-700 bg-slate-900/65 text-xs uppercase tracking-wide text-slate-400">
+            <thead className="border-b border-zinc-800 bg-zinc-950/50 text-xs font-medium uppercase tracking-wide text-zinc-500">
               <tr>
-                <th className="px-5 py-4 font-bold">Product</th>
-                <th className="px-5 py-4 text-right font-bold">Sold</th>
-                <th className="px-5 py-4 text-right font-bold">Received</th>
-                <th className="px-5 py-4 text-right font-bold">Sell-through</th>
-                <th className="px-5 py-4 text-right font-bold">Current stock</th>
-                <th className="px-5 py-4 font-bold">Stock status</th>
+                <th className="px-4 py-3">Product</th>
+                <th className="px-4 py-3 text-right">Sold</th>
+                <th className="px-4 py-3 text-right">Received</th>
+                <th className="px-4 py-3 text-right">Sell-through</th>
+                <th className="px-4 py-3 text-right">Current stock</th>
+                <th className="px-4 py-3">Stock status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700/80">
+            <tbody className="divide-y divide-zinc-800">
               {products.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-700/20">
-                  <td className="px-5 py-4">
-                    <Link href={`/inventory/${product.id}`} className="font-bold text-white hover:text-blue-300">
+                <tr key={product.id} className="hover:bg-zinc-800/50">
+                  <td className="px-4 py-3">
+                    <Link href={`/inventory/${product.id}`} className="font-medium text-white hover:text-emerald-400">
                       {product.name}
                     </Link>
-                    <p className="mt-1 font-mono text-xs text-slate-500">{product.sku}</p>
+                    <p className="mt-1 font-mono text-xs text-zinc-500">{product.sku}</p>
                   </td>
-                  <td className="px-5 py-4 text-right font-bold text-white">{product.unitsSold.toLocaleString()}</td>
-                  <td className="px-5 py-4 text-right text-slate-300">{product.unitsReceived.toLocaleString()}</td>
-                  <td className="px-5 py-4 text-right text-slate-300">{product.sellThroughRate.toFixed(1)}%</td>
-                  <td className="px-5 py-4 text-right font-bold text-white">{product.quantity.toLocaleString()}</td>
-                  <td className="px-5 py-4"><StockStatusBadge status={product.status} /></td>
+                  <td className="px-4 py-3 text-right font-medium text-white">{product.unitsSold.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right text-zinc-300">{product.unitsReceived.toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right text-zinc-300">{product.sellThroughRate.toFixed(1)}%</td>
+                  <td className="px-4 py-3 text-right font-medium text-white">{product.quantity.toLocaleString()}</td>
+                  <td className="px-4 py-3"><StockStatusBadge status={product.status} /></td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/35 p-8 text-center text-sm text-slate-400">
+        <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/50 p-6 text-center text-sm text-zinc-500">
           Add a stock item to begin comparing product performance.
         </div>
       )}
@@ -432,36 +432,36 @@ function RecentMovementPanel({ movements }: { movements: RecentMovement[] }) {
     <section className="mt-8" aria-labelledby="recent-movement-heading">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <h2 id="recent-movement-heading" className="text-base font-bold text-white">
+          <h2 id="recent-movement-heading" className="text-sm font-semibold text-white">
             Recent inventory movement
           </h2>
-          <p className="mt-1 text-sm text-slate-400">The latest sales and receipts recorded in inventory.</p>
+          <p className="mt-1 text-xs text-zinc-500">The latest sales and receipts recorded in inventory.</p>
         </div>
-        <Link href="/inventory" className="text-sm font-bold text-blue-300 hover:text-blue-200">
+        <Link href="/inventory" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
           View inventory
         </Link>
       </div>
       {movements.length ? (
-        <ul className="overflow-hidden rounded-2xl border border-slate-700 bg-slate-800/75 divide-y divide-slate-700/80">
+        <ul className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900 divide-y divide-zinc-800">
           {movements.map((movement) => {
             const received = movement.type === "STOCK_IN";
             const Icon = received ? ArrowDownToLine : ArrowUpFromLine;
 
             return (
               <li key={movement.id}>
-                <Link href={`/inventory/${movement.product.id}`} className="flex items-center gap-3 px-4 py-4 transition hover:bg-slate-700/25 sm:px-5">
-                  <span className={`grid size-9 place-items-center rounded-xl border ${received ? "border-emerald-400/20 bg-emerald-400/10 text-emerald-300" : "border-blue-400/20 bg-blue-500/10 text-blue-300"}`}>
+                <Link href={`/inventory/${movement.product.id}`} className="flex items-center gap-3 px-4 py-4 transition hover:bg-zinc-800/50 sm:px-5">
+                  <span className={`grid size-9 place-items-center rounded-md ${received ? "bg-emerald-500/10 text-emerald-400" : "bg-zinc-700/50 text-zinc-300"}`}>
                     <Icon className="size-4" aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-bold text-white">
+                    <p className="truncate text-sm font-medium text-white">
                       {received ? "Received" : "Sold"} {movement.quantity.toLocaleString()} units of {movement.product.name}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-zinc-500">
                       {movement.previousQuantity.toLocaleString()} → {movement.newQuantity.toLocaleString()} · {movement.performedBy.name}
                     </p>
                   </div>
-                  <time dateTime={movement.occurredAt.toISOString()} className="hidden text-xs text-slate-500 sm:block">
+                  <time dateTime={movement.occurredAt.toISOString()} className="hidden text-xs text-zinc-500 sm:block">
                     {formatMovementDate(movement.occurredAt)}
                   </time>
                 </Link>
@@ -470,7 +470,7 @@ function RecentMovementPanel({ movements }: { movements: RecentMovement[] }) {
           })}
         </ul>
       ) : (
-        <div className="rounded-2xl border border-dashed border-slate-700 bg-slate-900/35 p-8 text-center text-sm text-slate-400">
+        <div className="rounded-lg border border-dashed border-zinc-800 bg-zinc-950/50 p-6 text-center text-sm text-zinc-500">
           No inventory movements have been recorded yet.
         </div>
       )}

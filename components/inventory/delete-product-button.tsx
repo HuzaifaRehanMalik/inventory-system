@@ -123,7 +123,7 @@ export function DeleteProductButton({
         aria-haspopup="dialog"
         aria-label={`Delete ${productName}`}
         title={`Delete ${productName}`}
-        className={`inline-flex items-center gap-1.5 rounded-lg font-bold text-rose-300 transition hover:bg-rose-500/10 hover:text-rose-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-500/20 ${
+        className={`inline-flex items-center gap-1.5 rounded-md font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-500/20 ${
           compact ? "p-2 text-xs" : "px-3 py-2 text-xs"
         }`}
       >
@@ -133,7 +133,7 @@ export function DeleteProductButton({
 
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeModal();
           }}
@@ -144,16 +144,16 @@ export function DeleteProductButton({
             aria-labelledby={titleId}
             aria-describedby={descriptionId}
             onKeyDown={handleDialogKeyDown}
-            className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-900 p-6 text-left shadow-2xl shadow-slate-950/60"
+            className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-left shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id={titleId} className="text-lg font-bold text-white">
+                <h2 id={titleId} className="text-lg font-semibold text-white">
                   Delete Product?
                 </h2>
-                <p id={descriptionId} className="mt-3 text-sm leading-6 text-slate-300">
+                <p id={descriptionId} className="mt-3 text-sm leading-6 text-zinc-300">
                   Are you sure you want to delete &quot;{productName}&quot;?
-                  <span className="mt-2 block text-slate-400">
+                  <span className="mt-2 block text-zinc-400">
                     {hasHistory
                       ? "This product has inventory history and will be archived so analytics and transaction records remain intact."
                       : "This product will be permanently removed."}
@@ -165,7 +165,7 @@ export function DeleteProductButton({
                 disabled={loading}
                 onClick={closeModal}
                 aria-label="Close delete confirmation"
-                className="-mr-2 -mt-2 rounded-lg p-2 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="-mr-2 -mt-2 rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -177,7 +177,7 @@ export function DeleteProductButton({
                 type="button"
                 disabled={loading}
                 onClick={closeModal}
-                className="h-10 rounded-xl border border-slate-600 px-4 text-sm font-bold text-slate-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+                className="border border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md font-medium text-sm h-9 px-3 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -186,7 +186,7 @@ export function DeleteProductButton({
                 type="button"
                 disabled={loading}
                 onClick={deleteProduct}
-                className="h-10 rounded-xl bg-rose-600 px-4 text-sm font-bold text-white transition hover:bg-rose-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-rose-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                className="bg-red-600 hover:bg-red-500 text-white rounded-md font-medium text-sm h-9 px-3 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {loading ? "Deleting..." : "Delete Product"}
               </button>

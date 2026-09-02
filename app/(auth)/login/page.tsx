@@ -27,15 +27,26 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       title="Sign in to your account"
       description="Use your verified work email to access your secure workspace."
       footer={
-        <>
-          New to Stockeyfy?{" "}
-          <Link
-            href="/register"
-            className="font-bold text-blue-400 transition hover:text-blue-300 hover:underline"
-          >
-            Create an account
-          </Link>
-        </>
+        <div className="space-y-2">
+          <p>
+            New to Stockeyfy?{" "}
+            <Link
+              href="/register"
+              className="font-medium text-emerald-400 transition hover:text-emerald-300 hover:underline"
+            >
+              Create an account
+            </Link>
+          </p>
+          <p>
+            Not sure where to begin?{" "}
+            <Link
+              href="/guide"
+              className="font-medium text-emerald-400 transition hover:text-emerald-300 hover:underline"
+            >
+              See how it works
+            </Link>
+          </p>
+        </div>
       }
     >
       <LoginForm

@@ -29,61 +29,61 @@ export default async function SettingsPage() {
       />
 
       <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15 sm:p-7">
+        <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
           <SettingsForm settings={settings} />
         </section>
 
         <aside className="space-y-6">
-          <section className="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">
+          <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+            <p className="text-xs font-medium text-zinc-500">
               Account
             </p>
             <div className="mt-4 flex items-start gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-blue-400/20 bg-blue-500/10 text-blue-300">
+              <span className="grid size-8 shrink-0 place-items-center rounded-md bg-zinc-800 text-zinc-300">
                 <CircleUserRound className="size-5" />
               </span>
               <div className="min-w-0">
                 <p className="truncate font-bold text-white">{user.name}</p>
-                <p className="mt-1 truncate text-sm text-slate-400">{user.email}</p>
+                <p className="mt-1 truncate text-sm text-zinc-400">{user.email}</p>
               </div>
             </div>
-            <dl className="mt-5 space-y-3 border-t border-slate-700 pt-5 text-sm">
+            <dl className="mt-5 space-y-3 border-t border-zinc-800 pt-5 text-sm">
               <StatusRow label="Role" value={user.role === "USER" ? "Standard user" : "Administrator"} />
               <StatusRow label="Account" value={user.status === "ACTIVE" ? "Active" : user.status} />
               <StatusRow label="Email" value={user.emailVerified ? "Verified" : "Unverified"} />
             </dl>
             <Link
               href="/profile"
-              className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-blue-300 transition hover:text-blue-200"
+              className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-emerald-400 hover:text-emerald-300 transition"
             >
               Manage profile <ArrowRight className="size-4" />
             </Link>
           </section>
 
-          <section className="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 shadow-xl shadow-slate-950/15">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-300">
+          <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+            <p className="text-xs font-medium text-zinc-500">
               Security
             </p>
             <div className="mt-4 flex gap-3">
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-emerald-400/20 bg-emerald-500/10 text-emerald-300">
+              <span className="grid size-8 shrink-0 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
                 <ShieldCheck className="size-5" />
               </span>
               <div>
                 <p className="font-bold text-white">Authenticated</p>
-                <p className="mt-1 text-sm leading-5 text-slate-400">
+                <p className="mt-1 text-sm leading-5 text-zinc-400">
                   Your active server-verified session protects this workspace.
                 </p>
               </div>
             </div>
-            <div className="mt-5 flex items-start gap-3 border-t border-slate-700 pt-5">
-              <BadgeCheck className="mt-0.5 size-4 shrink-0 text-blue-300" />
-              <p className="text-sm leading-5 text-slate-400">
+            <div className="mt-5 flex items-start gap-3 border-t border-zinc-800 pt-5">
+              <BadgeCheck className="mt-0.5 size-4 shrink-0 text-emerald-400" />
+              <p className="text-sm leading-5 text-zinc-400">
                 Inventory changes require your current account and are scoped to its records.
               </p>
             </div>
             <Link
               href="/change-password"
-              className="mt-5 inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-900/60 px-3.5 py-2.5 text-sm font-bold text-slate-200 transition hover:border-blue-400/40 hover:text-white"
+              className="mt-5 inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
             >
               <KeyRound className="size-4" /> Change password
             </Link>
@@ -98,8 +98,8 @@ export default async function SettingsPage() {
 function StatusRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="text-slate-400">{label}</dt>
-      <dd className="font-semibold text-slate-200">{value}</dd>
+      <dt className="text-zinc-500">{label}</dt>
+      <dd className="font-medium text-zinc-200">{value}</dd>
     </div>
   );
 }

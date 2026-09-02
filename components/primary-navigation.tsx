@@ -2,32 +2,31 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-type NavigationItem = {
-  label: string;
-  href: string;
-  aliases?: string[];
+import { LogoutButton } from "@/components/auth/logout-button";
+import {
+  getNavigationItems,
+  type NavigationItem,
+} from "@/components/navigation-items";
+import { initials } from "@/lib/utils";
+
+export type NavigationUser = {
+  name: string;
+  email: string;
+  role: "USER" | "ADMIN";
 };
 
-const navigationItems: NavigationItem[] = [
-  { label: "Dashboard", href: "/", aliases: ["/home", "/dashboard"] },
-  { label: "Inventory", href: "/inventory" },
-  { label: "New Item", href: "/products/new" },
-  { label: "Add Stock", href: "/stock-in" },
-  { label: "Checkout / Sales", href: "/stock-out" },
-  { label: "Settings", href: "/settings" },
-];
-
-export function PrimaryNavigation() {
+export function PrimaryNavigation({ user }: { user: NavigationUser | null }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const navigationItems = getNavigationItems(Boolean(user));
 
   return (
     <>
       <nav
-        className="order-3 hidden w-full items-center justify-center gap-1 border-t border-slate-800 pt-2 md:flex xl:order-none xl:w-auto xl:flex-1 xl:border-t-0 xl:px-3 xl:pt-0"
+        className="order-3 hidden w-full items-center justify-center gap-1 border-t border-zinc-800 pt-2 md:flex xl:order-none xl:w-auto xl:flex-1 xl:border-t-0 xl:px-3 xl:pt-0"
         aria-label="Main navigation"
       >
         {navigationItems.map((item) => (
@@ -35,9 +34,16 @@ export function PrimaryNavigation() {
         ))}
       </nav>
 
+      {user ? (
+        <div className="hidden shrink-0 items-center gap-2 md:flex">
+          <UserProfileLink user={user} />
+          <LogoutButton compact />
+        </div>
+      ) : null}
+
       <button
         type="button"
-        className="ml-auto grid size-10 shrink-0 place-items-center rounded-xl border border-slate-700 bg-slate-800 text-slate-300 transition hover:border-blue-400/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden"
+        className="ml-auto grid size-10 shrink-0 place-items-center rounded-md border border-zinc-700 bg-zinc-800 text-zinc-400 transition hover:border-zinc-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 md:hidden"
         aria-expanded={open}
         aria-controls="mobile-primary-navigation"
         aria-label={open ? "Close navigation" : "Open navigation"}
@@ -52,12 +58,14 @@ export function PrimaryNavigation() {
 
       <div
         id="mobile-primary-navigation"
-        className={`absolute inset-x-0 top-full border-b border-brand-border bg-slate-950/98 px-4 py-3 shadow-xl shadow-slate-950/30 backdrop-blur-xl md:hidden ${
+        className={`absolute inset-x-0 top-full border-b border-zinc-800 bg-zinc-950 px-4 py-3 md:hidden ${
           open ? "block" : "hidden"
         }`}
       >
         <nav
-          className="mx-auto grid max-w-7xl grid-cols-2 gap-1"
+          className={`mx-auto grid max-w-7xl gap-1 ${
+            user ? "grid-cols-2" : "grid-cols-1"
+          }`}
           aria-label="Mobile main navigation"
         >
           {navigationItems.map((item) => (
@@ -70,6 +78,13 @@ export function PrimaryNavigation() {
             />
           ))}
         </nav>
+
+        {user ? (
+          <div className="mx-auto mt-3 flex max-w-7xl items-center gap-3 border-t border-zinc-800 pt-3">
+            <UserProfileLink user={user} mobile onNavigate={() => setOpen(false)} />
+            <LogoutButton />
+          </div>
+        ) : null}
       </div>
     </>
   );
@@ -88,23 +103,82 @@ function NavigationLink({
 }) {
   const active =
     item.href === "/"
-      ? pathname === "/" || item.aliases?.includes(pathname)
-      : pathname === item.href || pathname.startsWith(`${item.href}/`);
+      ? pathname === "/" || matchesAlias(pathname, item.aliases)
+      : pathname === item.href ||
+        pathname.startsWith(`${item.href}/`) ||
+        matchesAlias(pathname, item.aliases);
 
   return (
     <Link
       href={item.href}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`rounded-lg text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-        mobile ? "px-3 py-2.5" : "px-3 py-2"
-      } ${
-        active
-          ? "bg-blue-500/20 text-blue-100 shadow-inner shadow-blue-400/5 ring-1 ring-blue-400/20"
-          : "text-slate-300 hover:bg-slate-800 hover:text-white"
-      }`}
+      className={navigationLinkClassName(item, active, mobile)}
     >
       {item.label}
+    </Link>
+  );
+}
+
+function matchesAlias(pathname: string, aliases?: string[]) {
+  return aliases?.some(
+    (alias) => pathname === alias || pathname.startsWith(`${alias}/`),
+  );
+}
+
+function navigationLinkClassName(
+  item: NavigationItem,
+  active: boolean | undefined,
+  mobile: boolean,
+) {
+  const spacing = mobile ? "px-3 py-2.5" : "px-3 py-2";
+
+  if (item.emphasis === "primary") {
+    return `rounded-md bg-primary text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${spacing}`;
+  }
+
+  return `rounded-md text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${spacing} ${
+    active
+      ? "bg-zinc-800 text-white"
+      : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
+  }`;
+}
+
+function UserProfileLink({
+  user,
+  mobile = false,
+  onNavigate,
+}: {
+  user: NavigationUser;
+  mobile?: boolean;
+  onNavigate?: () => void;
+}) {
+  return (
+    <Link
+      href="/profile"
+      onClick={onNavigate}
+      className={`group flex min-w-0 items-center gap-3 rounded-md border border-transparent p-1.5 transition hover:border-zinc-700 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+        mobile ? "mr-auto flex-1" : "sm:py-1.5 sm:pl-2 sm:pr-3"
+      }`}
+      aria-label={`Open ${user.name}'s profile`}
+    >
+      <span className="grid size-9 shrink-0 place-items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-xs font-bold text-emerald-400">
+        {initials(user.name)}
+      </span>
+      <span className={`min-w-0 text-left ${mobile ? "block" : "hidden xl:block"}`}>
+        <span className="block max-w-40 truncate text-xs font-semibold text-white">
+          {user.name}
+        </span>
+        <span className="block text-[11px] text-zinc-400">
+          {user.role === "ADMIN" ? "Administrator" : "Team member"}
+        </span>
+      </span>
+      <ChevronRight
+        className={`size-3.5 text-zinc-500 transition-transform ${
+          mobile ? "ml-auto" : "hidden xl:block"
+        }`}
+        aria-hidden="true"
+      />
     </Link>
   );
 }

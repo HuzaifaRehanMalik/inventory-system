@@ -89,7 +89,7 @@ export function ProfileForm({
           Save profile
         </SubmitButton>
         {saved ? (
-          <span className="text-sm font-medium text-blue-400">
+          <span className="text-sm font-medium text-emerald-400">
             Changes saved
           </span>
         ) : null}

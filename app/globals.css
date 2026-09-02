@@ -1,23 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --surface: #1e293b;
-  --surface-muted: #111827;
-  --border: #334155;
-  --primary: #2563eb;
-  --accent: #60a5fa;
+  /* Surfaces */
+  --background: #09090b;
+  --foreground: #fafafa;
+  --surface: #18181b;
+  --surface-raised: #27272a;
+  --surface-muted: #09090b;
+
+  /* Borders */
+  --border: #27272a;
+  --border-strong: #3f3f46;
+
+  /* Primary */
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --primary-subtle: rgba(16, 185, 129, 0.1);
+
+  /* Semantic */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
   --color-surface-muted: var(--surface-muted);
   --color-brand-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-primary: var(--primary);
-  --color-accent: var(--accent);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-subtle: var(--primary-subtle);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
   --font-sans: var(--font-geist-sans);
 }
 
@@ -48,51 +69,35 @@ select {
 }
 
 ::selection {
-  background: rgb(37 99 235 / 0.38);
-  color: #f8fafc;
-}
-
-.auth-grid {
-  background-image:
-    linear-gradient(rgb(96 165 250 / 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(96 165 250 / 0.06) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background: rgb(16 185 129 / 0.28);
+  color: #fafafa;
 }
 
 .animate-enter {
-  animation: enter 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.brand-glow {
-  background:
-    radial-gradient(circle at 20% 10%, rgb(37 99 235 / 0.22), transparent 32rem),
-    radial-gradient(circle at 85% 65%, rgb(96 165 250 / 0.12), transparent 28rem),
-    #0f172a;
+  animation: enter 280ms ease-out both;
 }
 
 [data-sonner-toast] {
-  border-color: #334155 !important;
-  background: #1e293b !important;
-  color: #f8fafc !important;
+  border-color: #27272a !important;
+  background: #18181b !important;
+  color: #fafafa !important;
 }
 
 [data-sonner-toast][data-type="success"] [data-icon] {
-  color: #60a5fa !important;
+  color: #10b981 !important;
 }
 
 [data-sonner-toast] [data-button] {
-  background: #2563eb !important;
-  color: #f8fafc !important;
+  background: #10b981 !important;
+  color: #fafafa !important;
 }
 
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 

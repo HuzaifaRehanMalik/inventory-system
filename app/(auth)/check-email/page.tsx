@@ -27,24 +27,24 @@ export default async function CheckEmailPage({
       }
     >
       <div className="text-center">
-        <span className="mx-auto grid size-16 place-items-center rounded-2xl border border-blue-400/20 bg-blue-500/15 text-blue-300">
+        <span className="mx-auto grid size-12 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
           <MailCheck className="size-8" />
         </span>
-        <p className="mx-auto mt-5 max-w-sm text-sm leading-6 text-slate-300">
+        <p className="mx-auto mt-5 max-w-sm text-sm leading-6 text-zinc-400">
           Check your spam folder too. For security, we don’t confirm whether an
           email address belongs to an account.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/login"
-            className="inline-flex h-11 flex-1 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition hover:bg-blue-500 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30"
+            className="inline-flex h-9 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
           >
             Back to sign in
           </Link>
           {!isReset ? (
             <Link
               href="/verify-email"
-              className="inline-flex h-11 flex-1 items-center justify-center rounded-xl border border-slate-600 bg-slate-900/60 px-4 text-sm font-bold text-slate-200 transition hover:border-blue-400/50 hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/20"
+              className="inline-flex h-9 flex-1 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 px-4 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
             >
               Resend link
             </Link>
