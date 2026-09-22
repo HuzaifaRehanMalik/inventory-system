@@ -25,7 +25,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <AuthCard
       eyebrow="Welcome back"
       title="Sign in to your account"
-      description="Use your verified work email to access your secure workspace."
+      description="Use your account to manage products, stock, and business operations."
       footer={
         <div className="space-y-2">
           <p>

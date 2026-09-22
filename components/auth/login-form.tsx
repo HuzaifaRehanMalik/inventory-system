@@ -115,7 +115,7 @@ export function LoginForm({
       </label>
 
       <SubmitButton loading={form.formState.isSubmitting}>
-        Sign in securely
+        Sign in to Stockeyfy
       </SubmitButton>
     </form>
   );

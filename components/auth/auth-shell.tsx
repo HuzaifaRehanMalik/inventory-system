@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Boxes, CheckCircle2, LockKeyhole, Sparkles } from "lucide-react";
+import { Boxes, ChartNoAxesCombined, PackageCheck, Sparkles } from "lucide-react";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
@@ -24,24 +24,24 @@ export function AuthShell({ children }: { children: ReactNode }) {
         <div className="relative max-w-md">
           <div className="mb-5 inline-flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-semibold text-emerald-400">
             <Sparkles className="size-3.5" aria-hidden="true" />
-            Secure access workspace
+            Inventory management workspace
           </div>
           <h2 className="text-3xl font-semibold leading-tight tracking-tight">
-            Your operations start with a trusted identity.
+            Keep every part of your inventory moving.
           </h2>
           <p className="mt-5 max-w-sm text-base leading-7 text-zinc-400">
-            Purpose-built account security with verified identities, protected
-            sessions, and complete recovery flows.
+            Organize products, track stock, and understand your business from
+            one focused workspace.
           </p>
 
           <div className="mt-10 grid gap-4">
             <SecurityPoint
-              icon={<LockKeyhole className="size-4" />}
-              text="Encrypted, HTTP-only sessions"
+              icon={<PackageCheck className="size-4" />}
+              text="Track stock in and stock out"
             />
             <SecurityPoint
-              icon={<CheckCircle2 className="size-4" />}
-              text="Verified email access"
+              icon={<ChartNoAxesCombined className="size-4" />}
+              text="See clear inventory insights"
             />
           </div>
         </div>
