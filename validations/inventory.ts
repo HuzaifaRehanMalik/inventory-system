@@ -16,6 +16,11 @@ export const productIdSchema = z
   .max(191, "Product ID is invalid.")
   .regex(/^c[a-z0-9]{20,}$/, "Product ID is invalid.");
 
+export const idempotencyKeySchema = z
+  .string()
+  .trim()
+  .regex(/^[A-Za-z0-9_-]{16,128}$/, "Idempotency key is invalid.");
+
 const optionalText = (max: number) =>
   z
     .string()
@@ -40,6 +45,11 @@ const positiveWholeQuantity = (label: string) =>
       DATABASE_QUANTITY_MAX,
       `${label} exceeds the database's supported whole-number range.`,
     );
+
+const businessDate = z.coerce.date().refine(
+  (value) => value.getTime() <= Date.now() + 24 * 60 * 60 * 1000,
+  "Movement dates cannot be more than one day in the future.",
+);
 
 const productFieldsSchema = z.object({
   name: z
@@ -73,7 +83,7 @@ export const updateProductSchema = productFieldsSchema;
 const transactionBaseSchema = z.object({
   productId: productIdSchema,
   quantity: positiveWholeQuantity("Quantity"),
-  occurredAt: z.coerce.date(),
+  occurredAt: businessDate,
   referenceNumber: optionalText(120),
   notes: optionalText(2000),
 });

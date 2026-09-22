@@ -50,7 +50,9 @@ export function StockInForm({
       const response = await apiRequest<{
         productId: string;
         newQuantity: number;
-      }>("/api/inventory/stock-in", payload);
+      }>("/api/inventory/stock-in", payload, "POST", {
+        "Idempotency-Key": crypto.randomUUID(),
+      });
       toast.success(
         `${response.message} New quantity: ${response.data.newQuantity}.`,
       );

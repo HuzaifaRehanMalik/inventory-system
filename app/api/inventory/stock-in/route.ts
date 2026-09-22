@@ -10,13 +10,19 @@ import {
   logInventoryEvent,
 } from "@/lib/inventory/logging";
 import { recordStockIn } from "@/lib/inventory/service";
-import { stockInSchema, type StockInInput } from "@/validations/inventory";
+import {
+  idempotencyKeySchema,
+  stockInSchema,
+  type StockInInput,
+} from "@/validations/inventory";
+
+type StockInRequest = StockInInput & { idempotencyKey: string };
 
 export async function POST(request: NextRequest) {
   const requestId = crypto.randomUUID();
   let stage = "request_received";
   let userId: string | undefined;
-  let input: StockInInput | undefined;
+  let input: StockInRequest | undefined;
 
   logInventoryEvent({ requestId, operation: "stock_in", stage });
 
@@ -33,7 +39,12 @@ export async function POST(request: NextRequest) {
       windowMs: 15 * 60 * 1000,
     });
     stage = "validation";
-    input = await parseJson(request, stockInSchema);
+    input = {
+      ...(await parseJson(request, stockInSchema)),
+      idempotencyKey: idempotencyKeySchema.parse(
+        request.headers.get("idempotency-key") ?? "",
+      ),
+    };
     logInventoryEvent({
       requestId,
       operation: "stock_in",

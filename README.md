@@ -123,6 +123,7 @@ production origin instead of the localhost fallback.
 | `DATABASE_POOL_MAX` | Runtime | Optional server setting, 1–20; defaults to 5 |
 | `AUTH_SECRET` | Runtime | Server secret, at least 32 characters |
 | `AUTH_URL` | Runtime | Server configuration; public application origin, required by email configuration validation |
+| `TRUSTED_PROXY_HEADERS` | Runtime | Optional; set to `true` only when the hosting proxy overwrites forwarded client-IP headers before the app receives them |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` | Runtime email delivery | Required server configuration; `SMTP_SECURE` is `true` or `false` |
 | `SMTP_USER`, `SMTP_PASSWORD` | Runtime email delivery | Required server secrets |
 | `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME` | Runtime email delivery | Required sender configuration |

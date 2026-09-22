@@ -72,8 +72,19 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       className={`${geistSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-background font-sans text-foreground">
-        {children}
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        <main className="flex min-h-0 flex-1 flex-col">{children}</main>
+        <footer className="border-t border-brand-border px-6 py-5 text-center text-sm text-zinc-400">
+          Made by{" "}
+          <a
+            href="https://huzaifa-rehan-portfolio.vercel.app/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary transition-colors hover:text-primary-hover hover:underline"
+          >
+            Huzaifa Rehan
+          </a>
+        </footer>
       </body>
     </html>
   );

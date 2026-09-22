@@ -18,6 +18,7 @@ import {
 import { dateInputValue } from "../lib/inventory/date.ts";
 import {
   createProductSchema,
+  idempotencyKeySchema,
   productIdSchema,
   stockInSchema,
   stockOutSchema,
@@ -106,6 +107,12 @@ test("Delete Product validates product identifiers", () => {
   assert.equal(productIdSchema.safeParse("not-a-product-id").success, false);
 });
 
+test("stock mutation idempotency keys are validated", () => {
+  assert.equal(idempotencyKeySchema.safeParse("a".repeat(16)).success, true);
+  assert.equal(idempotencyKeySchema.safeParse("short").success, false);
+  assert.equal(idempotencyKeySchema.safeParse("bad key with spaces").success, false);
+});
+
 test("Receive Stock accepts only positive whole quantities and valid IDs", () => {
   const base = {
     productId,
@@ -118,6 +125,10 @@ test("Receive Stock accepts only positive whole quantities and valid IDs", () =>
   assert.equal(stockInSchema.safeParse({ ...base, quantity: 0 }).success, false);
   assert.equal(stockInSchema.safeParse({ ...base, quantity: -2 }).success, false);
   assert.equal(stockInSchema.safeParse({ ...base, quantity: 1.2 }).success, false);
+  assert.equal(
+    stockInSchema.safeParse({ ...base, occurredAt: "2099-01-01" }).success,
+    false,
+  );
   assert.equal(
     stockInSchema.safeParse({ ...base, productId: "not-a-product-id" }).success,
     false,

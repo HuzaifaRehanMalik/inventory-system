@@ -12,6 +12,10 @@ const serverEnvironmentSchema = z.object({
   AUTH_SECRET: z.string().min(32),
   AUTH_URL: z.string().url(),
   APP_URL: z.string().url(),
+  TRUSTED_PROXY_HEADERS: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((value) => value === "true"),
   SMTP_HOST: z.string().min(1),
   SMTP_PORT: z.coerce.number().int().min(1).max(65535),
   SMTP_SECURE: z

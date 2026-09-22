@@ -245,6 +245,7 @@ model InventoryTransaction {
   customerId       String?
   counterpartyName String?                  @db.VarChar(160)
   referenceNumber  String?                  @db.VarChar(120)
+  idempotencyKey   String?                  @db.VarChar(128)
   notes            String?                  @db.VarChar(2000)
   occurredAt       DateTime
   performedById    String
@@ -259,6 +260,7 @@ model InventoryTransaction {
   @@index([type, occurredAt])
   @@index([supplierId])
   @@index([customerId])
+  @@unique([performedById, type, idempotencyKey])
 }
 
 model InventoryActivity {

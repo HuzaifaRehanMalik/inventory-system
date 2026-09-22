@@ -78,6 +78,8 @@ export function errorResponse(
   context: string,
   requestId?: string,
 ) {
+  const responseHeaders = { "Cache-Control": "no-store" };
+
   if (error instanceof AppError) {
     return Response.json(
       {
@@ -88,7 +90,7 @@ export function errorResponse(
           ...error.details,
         },
       },
-      { status: error.status },
+      { status: error.status, headers: responseHeaders },
     );
   }
 
@@ -102,7 +104,7 @@ export function errorResponse(
           fieldErrors: error.flatten().fieldErrors,
         },
       },
-      { status: 422 },
+      { status: 422, headers: responseHeaders },
     );
   }
 
@@ -117,7 +119,7 @@ export function errorResponse(
         eventId,
       },
     },
-    { status: 500 },
+    { status: 500, headers: responseHeaders },
   );
 }
 
@@ -126,5 +128,8 @@ export function successResponse<T>(
   message: string,
   status = 200,
 ) {
-  return Response.json({ success: true, message, data }, { status });
+  return Response.json(
+    { success: true, message, data },
+    { status, headers: { "Cache-Control": "no-store" } },
+  );
 }

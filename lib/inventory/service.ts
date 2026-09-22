@@ -27,6 +27,9 @@ const TRANSACTION_OPTIONS = {
   timeout: 10_000,
 };
 
+type StockInOperation = StockInInput & { idempotencyKey: string };
+type StockOutOperation = StockOutInput & { idempotencyKey: string };
+
 function errorCode(error: unknown) {
   if (
     typeof error === "object" &&
@@ -273,8 +276,34 @@ export async function updateProduct(
   }
 }
 
-export async function recordStockIn(ownerId: string, input: StockInInput) {
+export async function recordStockIn(ownerId: string, input: StockInOperation) {
   const result = await serializableTransaction(async (transaction) => {
+    const existing = await transaction.inventoryTransaction.findFirst({
+      where: {
+        performedById: ownerId,
+        type: "STOCK_IN",
+        idempotencyKey: input.idempotencyKey,
+      },
+      select: {
+        id: true,
+        productId: true,
+        product: { select: { name: true } },
+        previousQuantity: true,
+        newQuantity: true,
+      },
+    });
+
+    if (existing) {
+      return {
+        transactionId: existing.id,
+        productId: existing.productId,
+        productName: existing.product.name,
+        previousQuantity: existing.previousQuantity,
+        newQuantity: existing.newQuantity,
+        replayed: true,
+      };
+    }
+
     const product = await transaction.product.findFirst({
       where: { id: input.productId, ownerId, active: true },
       select: {
@@ -341,6 +370,7 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
         newQuantity,
         unitCost: purchasePrice,
         referenceNumber: input.referenceNumber,
+        idempotencyKey: input.idempotencyKey,
         notes: input.notes,
         occurredAt: input.occurredAt,
         performedById: ownerId,
@@ -364,6 +394,7 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
       productName: product.name,
       previousQuantity,
       newQuantity,
+      replayed: false,
     };
   });
 
@@ -384,8 +415,34 @@ export async function recordStockIn(ownerId: string, input: StockInInput) {
   return result;
 }
 
-export async function recordStockOut(ownerId: string, input: StockOutInput) {
+export async function recordStockOut(ownerId: string, input: StockOutOperation) {
   const result = await serializableTransaction(async (transaction) => {
+    const existing = await transaction.inventoryTransaction.findFirst({
+      where: {
+        performedById: ownerId,
+        type: "STOCK_OUT",
+        idempotencyKey: input.idempotencyKey,
+      },
+      select: {
+        id: true,
+        productId: true,
+        product: { select: { name: true } },
+        previousQuantity: true,
+        newQuantity: true,
+      },
+    });
+
+    if (existing) {
+      return {
+        transactionId: existing.id,
+        productId: existing.productId,
+        productName: existing.product.name,
+        previousQuantity: existing.previousQuantity,
+        newQuantity: existing.newQuantity,
+        replayed: true,
+      };
+    }
+
     const product = await transaction.product.findFirst({
       where: { id: input.productId, ownerId, active: true },
       select: {
@@ -453,6 +510,7 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
         newQuantity,
         unitCost: product.inventory.averageUnitCost,
         referenceNumber: input.referenceNumber,
+        idempotencyKey: input.idempotencyKey,
         notes: input.notes,
         occurredAt: input.occurredAt,
         performedById: ownerId,
@@ -491,6 +549,7 @@ export async function recordStockOut(ownerId: string, input: StockOutInput) {
       productName: product.name,
       previousQuantity: available,
       newQuantity,
+      replayed: false,
     };
   });
 
