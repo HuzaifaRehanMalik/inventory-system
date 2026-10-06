@@ -57,7 +57,7 @@ export default async function InventoryPage({
         actions={
           <Link
             href="/products/new"
-            className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
+            className="inline-flex h-10 items-center gap-2 rounded-md bg-primary px-4 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
           >
             <PackagePlus className="size-4" />
             Add Stock
@@ -67,7 +67,7 @@ export default async function InventoryPage({
 
       <form
         action="/inventory"
-        className="mt-7 grid gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-3 md:grid-cols-[minmax(220px,1fr)_180px_160px_160px_110px]"
+        className="mt-7 grid gap-3 panel p-3 md:grid-cols-[minmax(220px,1fr)_180px_160px_160px_110px]"
       >
         <label className="relative block">
           <span className="sr-only">Search products</span>
@@ -77,7 +77,7 @@ export default async function InventoryPage({
             defaultValue={filters.query}
             placeholder="Search products or SKU..."
             maxLength={160}
-            className="h-9 w-full rounded-md border border-zinc-700 bg-zinc-950 pl-9 pr-3 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
+            className="h-9 w-full rounded-md border border-zinc-700 bg-zinc-950 pl-9 pr-3 text-sm text-zinc-50 outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
           />
         </label>
         <FilterSelect
@@ -107,7 +107,7 @@ export default async function InventoryPage({
         <input type="hidden" name="direction" value={filters.direction} />
         <button
           type="submit"
-          className="h-9 rounded-md bg-primary px-3 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
+          className="h-10 rounded-md bg-primary px-4 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
         >
           Apply
         </button>
@@ -116,9 +116,9 @@ export default async function InventoryPage({
       <section className="mt-5">
         {inventory.rows.length ? (
           <>
-            <div className="hidden overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900 md:block">
+            <div className="hidden overflow-x-auto panel md:block">
               <table className="w-full min-w-[1260px] text-left text-sm">
-                <thead className="border-b border-zinc-800 bg-zinc-950/50 text-xs font-medium uppercase tracking-wide text-zinc-500">
+                <thead className="border-b border-zinc-800 text-xs font-medium text-zinc-500">
                   <tr>
                     <th className="px-4 py-3 font-medium">Product</th>
                     <th className="px-4 py-3 font-medium">SKU</th>
@@ -134,11 +134,11 @@ export default async function InventoryPage({
                 </thead>
                 <tbody className="divide-y divide-zinc-800">
                   {inventory.rows.map((row) => (
-                    <tr key={row.id} className="transition hover:bg-zinc-800/50">
+                    <tr key={row.id} className="transition hover:bg-zinc-950">
                       <td className="px-4 py-3">
                         <Link
                           href={`/inventory/${row.id}`}
-                          className="font-medium text-white transition hover:text-emerald-400"
+                          className="font-medium text-zinc-50 transition hover:text-emerald-400"
                         >
                           {row.name}
                         </Link>
@@ -149,7 +149,7 @@ export default async function InventoryPage({
                       <td className="px-4 py-3 text-zinc-400">
                         {row.category?.name ?? "Uncategorized"}
                       </td>
-                      <td className="px-4 py-3 text-right font-medium text-white">
+                      <td className="px-4 py-3 text-right font-medium text-zinc-50">
                         {row.quantity.toLocaleString()}
                       </td>
                       <td className="px-4 py-3 text-right text-zinc-400">
@@ -171,7 +171,7 @@ export default async function InventoryPage({
                         <div className="flex items-center justify-end gap-1">
                           <Link
                             href={`/products/${row.id}`}
-                            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
+                            className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-50"
                           >
                             <PencilLine className="size-3.5" aria-hidden="true" />
                             Edit
@@ -193,13 +193,13 @@ export default async function InventoryPage({
               {inventory.rows.map((row) => (
                 <article
                   key={row.id}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900 p-4"
+                  className="panel p-4"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
                         href={`/inventory/${row.id}`}
-                        className="font-medium text-white transition hover:text-emerald-400"
+                        className="font-medium text-zinc-50 transition hover:text-emerald-400"
                       >
                         {row.name}
                       </Link>
@@ -218,7 +218,7 @@ export default async function InventoryPage({
                     </div>
                     <div className="text-right">
                       <dt className="text-xs text-zinc-500">Quantity</dt>
-                      <dd className="mt-1 font-medium text-white">
+                      <dd className="mt-1 font-medium text-zinc-50">
                         {row.quantity.toLocaleString()}
                       </dd>
                     </div>
@@ -238,7 +238,7 @@ export default async function InventoryPage({
                   <div className="mt-5 flex items-center justify-end gap-1 border-t border-zinc-800 pt-3">
                     <Link
                       href={`/products/${row.id}`}
-                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
+                      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-50"
                     >
                       <PencilLine className="size-3.5" aria-hidden="true" />
                       Edit
@@ -294,7 +294,7 @@ export default async function InventoryPage({
                     ? "/inventory"
                     : "/products/new"
                 }
-                className="inline-flex h-9 items-center rounded-md bg-primary px-3 text-sm font-medium text-white transition hover:bg-primary-hover"
+                className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover"
               >
                 {filters.query || filters.category || filters.status !== "ALL"
                   ? "Clear filters"
@@ -325,7 +325,7 @@ function FilterSelect({
       <span className="sr-only">{label}</span>
       <select
         {...props}
-        className="h-9 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
+        className="h-9 w-full rounded-md border border-zinc-700 bg-zinc-950 px-3 text-sm text-zinc-50 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
       >
         {children}
       </select>
@@ -353,7 +353,7 @@ function PaginationLink({
   return (
     <Link
       href={href}
-      className="inline-flex h-8 items-center gap-1 rounded-md border border-zinc-700 px-2.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
+      className="inline-flex h-8 items-center gap-1 rounded-md border border-zinc-700 px-2.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-50"
     >
       {children}
     </Link>

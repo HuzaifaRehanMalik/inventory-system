@@ -78,7 +78,7 @@ export function VerifyEmailPanel({ token }: { token?: string }) {
         <button
           type="button"
           onClick={() => router.replace("/login?verified=1")}
-          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
+          className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-md bg-primary px-4 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50"
         >
           Continue to sign in
         </button>
@@ -181,7 +181,7 @@ function StatusPanel({
       >
         {icon}
       </span>
-      <h2 className="mt-4 text-lg font-bold text-white">
+      <h2 className="mt-4 text-lg font-bold text-zinc-50">
         {title}
       </h2>
       <p className="mt-1 text-sm leading-6 text-zinc-400">

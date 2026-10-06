@@ -31,17 +31,17 @@ export async function InventoryModulePlaceholder({
         Back to home
       </Link>
 
-      <section className="mt-6 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900">
+      <section className="mt-6 overflow-hidden panel">
         <div className="border-b border-zinc-800 bg-zinc-950/50 p-5">
           <div className="flex items-start gap-4">
             <span className="grid size-10 shrink-0 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
               <Icon className="size-5" aria-hidden="true" />
             </span>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-emerald-400">
+              <p className="text-[13px] font-medium text-emerald-400">
                 Stockeyfy feature
               </p>
-              <h1 className="mt-1 text-xl font-semibold tracking-tight text-white">
+              <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-50">
                 {item.title}
               </h1>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">

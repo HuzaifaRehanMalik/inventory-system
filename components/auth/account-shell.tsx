@@ -16,9 +16,9 @@ export function AccountShell({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-[100dvh] text-foreground">
       <WorkspaceHeader user={user} />
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-8 sm:px-6 lg:px-8 lg:pt-10">
         {children}
       </main>
     </div>

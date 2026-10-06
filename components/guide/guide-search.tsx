@@ -51,14 +51,14 @@ export function GuideSearch({ entries }: { entries: GuideSearchEntry[] }) {
         autoComplete="off"
         aria-describedby="guide-search-hint"
         aria-controls="guide-search-results"
-        className="h-10 w-full rounded-md border border-zinc-700 bg-zinc-950 pl-9 pr-10 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
+        className="h-10 w-full rounded-md border border-zinc-700 bg-zinc-950 pl-9 pr-10 text-sm text-zinc-50 outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
       />
       {query ? (
         <button
           type="button"
           onClick={() => setQuery("")}
           aria-label="Clear guide search"
-          className="absolute right-2.5 top-2 grid size-6 place-items-center rounded text-zinc-400 transition hover:bg-zinc-800 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
+          className="absolute right-2.5 top-2 grid size-6 place-items-center rounded text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
         >
           <X className="size-3.5" aria-hidden="true" />
         </button>
@@ -87,7 +87,7 @@ export function GuideSearch({ entries }: { entries: GuideSearchEntry[] }) {
                     className="group flex items-center gap-3 rounded-md px-3 py-2.5 transition hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500"
                   >
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium text-white">
+                      <span className="block text-sm font-medium text-zinc-50">
                         {entry.title}
                       </span>
                       <span className="mt-0.5 block text-xs leading-5 text-zinc-400">

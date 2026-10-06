@@ -1,27 +1,37 @@
 @import "tailwindcss";
 
+/*
+ * Stockeyfy design language: "warm paper + green".
+ * Utilitarian minimalism: warm monochrome canvas, charcoal ink, 1px hairline
+ * borders, flat surfaces, a serif for display headings and one deep green
+ * accent. The Tailwind zinc / emerald / amber / red scales are remapped below
+ * (zinc is inverted: 950 = lightest canvas, 50 = darkest ink) so every existing
+ * utility in the app inherits the system from one place.
+ */
+
 :root {
   /* Surfaces */
-  --background: #09090b;
-  --foreground: #fafafa;
-  --surface: #18181b;
-  --surface-raised: #27272a;
-  --surface-muted: #09090b;
+  --background: #f7f6f3;
+  --foreground: #2f3437;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-muted: #fbfbfa;
 
   /* Borders */
-  --border: #27272a;
-  --border-strong: #3f3f46;
+  --border: #eaeaea;
+  --border-strong: #dcdbd7;
 
-  /* Primary */
-  --primary: #10b981;
-  --primary-hover: #059669;
-  --primary-subtle: rgba(16, 185, 129, 0.1);
+  /* Primary (deep green) */
+  --primary: #2f6b3a;
+  --primary-hover: #25572f;
+  --primary-ink: #ffffff;
+  --primary-subtle: #edf3ec;
 
   /* Semantic */
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --info: #3b82f6;
+  --success: #346538;
+  --warning: #956400;
+  --danger: #9f2f2d;
+  --info: #1f6c9f;
 }
 
 @theme inline {
@@ -34,12 +44,65 @@
   --color-border-strong: var(--border-strong);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-primary-ink: var(--primary-ink);
   --color-primary-subtle: var(--primary-subtle);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-info: var(--info);
   --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-newsreader);
+}
+
+@theme {
+  /* Warm monochrome, inverted so dark-theme class names keep their roles:
+     950 canvas, 900 card, 800 hairline, 500 muted text, 50 ink. */
+  --color-zinc-50: #111111;
+  --color-zinc-100: #1d1f21;
+  --color-zinc-200: #2f3437;
+  --color-zinc-300: #3f4245;
+  --color-zinc-400: #5f5e5b;
+  --color-zinc-500: #787774;
+  --color-zinc-600: #a5a39e;
+  --color-zinc-700: #dcdbd7;
+  --color-zinc-800: #eaeaea;
+  --color-zinc-900: #ffffff;
+  --color-zinc-950: #f7f6f3;
+
+  /* Green accent (replaces the old lime). Text shades are dark enough for AA
+     on white; translucent backgrounds resolve to pale green washes. */
+  --color-emerald-50: #f4f8f3;
+  --color-emerald-100: #edf3ec;
+  --color-emerald-200: #346538;
+  --color-emerald-300: #2f6b3a;
+  --color-emerald-400: #2f6b3a;
+  --color-emerald-500: #3d7a47;
+  --color-emerald-600: #25572f;
+  --color-emerald-700: #1f4a28;
+  --color-emerald-800: #193d21;
+  --color-emerald-900: #13301a;
+  --color-emerald-950: #0c2011;
+
+  /* Muted semantic inks */
+  --color-amber-200: #956400;
+  --color-amber-300: #956400;
+  --color-amber-400: #956400;
+  --color-amber-500: #a87212;
+  --color-red-200: #9f2f2d;
+  --color-red-300: #9f2f2d;
+  --color-red-400: #9f2f2d;
+  --color-red-500: #b23b38;
+  --color-red-600: #9f2f2d;
+
+  /* Shape system: controls 6px, cards 12px, tags full pill. */
+  --radius-sm: 0.25rem;
+  --radius: 0.375rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 0.75rem;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * {
@@ -47,17 +110,41 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   background: var(--background);
   scroll-behavior: smooth;
 }
 
 body {
+  position: relative;
   min-width: 320px;
-  background: var(--background);
+  /* html carries the base color so the fixed ambient layer stays visible */
+  background: transparent;
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), "Helvetica Neue", sans-serif;
+  line-height: 1.6;
   text-rendering: optimizeLegibility;
+}
+
+/* One barely-there warm light spot drifting very slowly behind the page. */
+body::before {
+  content: "";
+  position: fixed;
+  top: -20rem;
+  left: 10%;
+  z-index: -1;
+  width: 60rem;
+  height: 40rem;
+  pointer-events: none;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(214 196 160 / 0.22), transparent);
+  will-change: transform;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(20vw, 6vh, 0); }
 }
 
 button,
@@ -68,37 +155,142 @@ select {
   -webkit-tap-highlight-color: transparent;
 }
 
-::selection {
-  background: rgb(16 185 129 / 0.28);
-  color: #fafafa;
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--primary);
 }
 
-.animate-enter {
-  animation: enter 280ms ease-out both;
+button:not(:disabled):active,
+a[class*="bg-primary"]:active {
+  transform: scale(0.98);
 }
+
+::selection {
+  background: #edf3ec;
+  color: #111111;
+}
+
+/* Display headings use the editorial serif. */
+.font-serif {
+  font-optical-sizing: auto;
+  letter-spacing: -0.025em;
+}
+
+kbd {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--background);
+  padding: 0 0.35em;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.85em;
+}
+
+/* Numbers read as instruments: tabular, aligned. */
+table,
+dd,
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Flat cards: hairline border, no shadow until hovered. */
+@layer components {
+  .panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    transition:
+      box-shadow 200ms ease,
+      border-color 200ms ease;
+  }
+
+  .lift:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.04);
+  }
+}
+
+/* Native select chevron that matches the palette. */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23787774' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  padding-right: 2.25rem !important;
+}
+
+/* Page entrance: children cascade in, so hierarchy reads top to bottom. */
+.animate-enter > * {
+  animation: enter 600ms var(--ease-out-expo) both;
+}
+.animate-enter > *:nth-child(2) { animation-delay: 80ms; }
+.animate-enter > *:nth-child(3) { animation-delay: 160ms; }
+.animate-enter > *:nth-child(4) { animation-delay: 240ms; }
+.animate-enter > *:nth-child(5) { animation-delay: 320ms; }
+.animate-enter > *:nth-child(n + 6) { animation-delay: 400ms; }
 
 [data-sonner-toast] {
-  border-color: #27272a !important;
-  background: #18181b !important;
-  color: #fafafa !important;
+  border-color: var(--border) !important;
+  border-radius: var(--radius-lg) !important;
+  background: var(--surface) !important;
+  color: var(--foreground) !important;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.04) !important;
 }
 
 [data-sonner-toast][data-type="success"] [data-icon] {
-  color: #10b981 !important;
+  color: var(--primary) !important;
 }
 
 [data-sonner-toast] [data-button] {
-  background: #10b981 !important;
-  color: #fafafa !important;
+  background: var(--primary) !important;
+  color: var(--primary-ink) !important;
 }
 
 @keyframes enter {
   from {
     opacity: 0;
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
+}
+
+/* Rows and list items slide in one after another. */
+.stagger > * {
+  animation: enter 480ms var(--ease-out-expo) both;
+  animation-delay: calc(var(--i, 0) * 80ms + 200ms);
+}
+.stagger > :nth-child(2) { --i: 1; }
+.stagger > :nth-child(3) { --i: 2; }
+.stagger > :nth-child(4) { --i: 3; }
+.stagger > :nth-child(5) { --i: 4; }
+.stagger > :nth-child(6) { --i: 5; }
+.stagger > :nth-child(7) { --i: 6; }
+.stagger > :nth-child(n + 8) { --i: 7; }
+
+@keyframes grow-up {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes grow-right {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.bar-grow-x {
+  transform-origin: left;
+  animation: grow-right 900ms var(--ease-out-expo) 250ms both;
+}
+
+.bar-grow {
+  transform-origin: bottom;
+  animation: grow-up 700ms var(--ease-out-expo) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -107,6 +299,7 @@ select {
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }

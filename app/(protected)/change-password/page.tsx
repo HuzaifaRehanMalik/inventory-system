@@ -21,11 +21,11 @@ export default async function ChangePasswordPage() {
           <ArrowLeft className="size-4" />
           Back to profile
         </Link>
-        <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+        <section className="panel p-4 sm:p-6">
           <span className="grid size-10 place-items-center rounded-md bg-amber-500/10 text-amber-400">
             <ShieldAlert className="size-5" />
           </span>
-          <h1 className="mt-5 text-xl font-semibold tracking-tight text-white">
+          <h1 className="mt-5 text-xl font-semibold tracking-tight text-zinc-50">
             Change password
           </h1>
           <p className="mt-2 text-sm text-zinc-400 mb-6">

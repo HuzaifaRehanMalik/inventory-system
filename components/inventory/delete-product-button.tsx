@@ -144,11 +144,11 @@ export function DeleteProductButton({
             aria-labelledby={titleId}
             aria-describedby={descriptionId}
             onKeyDown={handleDialogKeyDown}
-            className="w-full max-w-md rounded-lg border border-zinc-800 bg-zinc-900 p-6 text-left shadow-xl"
+            className="w-full max-w-md panel p-6 text-left shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id={titleId} className="text-lg font-semibold text-white">
+                <h2 id={titleId} className="text-lg font-semibold text-zinc-50">
                   Delete Product?
                 </h2>
                 <p id={descriptionId} className="mt-3 text-sm leading-6 text-zinc-300">
@@ -165,7 +165,7 @@ export function DeleteProductButton({
                 disabled={loading}
                 onClick={closeModal}
                 aria-label="Close delete confirmation"
-                className="-mr-2 -mt-2 rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="-mr-2 -mt-2 rounded-lg p-2 text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>
@@ -177,7 +177,7 @@ export function DeleteProductButton({
                 type="button"
                 disabled={loading}
                 onClick={closeModal}
-                className="border border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white rounded-md font-medium text-sm h-9 px-3 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="border border-zinc-700 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-zinc-50 rounded-md font-medium text-sm h-9 px-3 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Cancel
               </button>

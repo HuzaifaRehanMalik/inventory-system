@@ -20,26 +20,26 @@ export function AuthCard({
   return (
     <section
       className={cn(
-        "animate-enter w-full rounded-lg border border-zinc-800 bg-zinc-900 p-6 sm:p-8",
+        "animate-enter w-full p-1 sm:p-2",
         className,
       )}
     >
-      <div className="mb-7">
+      <div className="mb-8">
         {eyebrow ? (
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-emerald-400">
+          <p className="mb-3 text-[13px] font-medium text-emerald-400">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="text-xl font-semibold tracking-tight text-white">
+        <h1 className="font-serif text-4xl font-normal leading-[1.1] text-zinc-50">
           {title}
         </h1>
-        <p className="mt-2 text-sm leading-6 text-zinc-400">
+        <p className="mt-3 text-[15px] leading-relaxed text-zinc-400">
           {description}
         </p>
       </div>
       {children}
       {footer ? (
-        <div className="mt-7 border-t border-zinc-800 pt-6 text-center text-sm text-zinc-400">
+        <div className="mt-8 border-t border-zinc-800/80 pt-6 text-center text-sm text-zinc-400">
           {footer}
         </div>
       ) : null}

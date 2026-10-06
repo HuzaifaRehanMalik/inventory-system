@@ -42,7 +42,7 @@ export const FormField = forwardRef<HTMLInputElement, FieldProps>(
         <div className="mb-2 flex items-center justify-between gap-3">
           <label
             htmlFor={id}
-            className="block text-sm font-medium text-zinc-300"
+            className="block text-[13px] font-medium text-zinc-300"
           >
             {label}
           </label>
@@ -61,10 +61,10 @@ export const FormField = forwardRef<HTMLInputElement, FieldProps>(
             aria-invalid={Boolean(error)}
             aria-describedby={error || hint ? descriptionId : undefined}
             className={cn(
-              "h-10 w-full rounded-md border border-zinc-700 bg-zinc-900 px-3.5 text-[15px] text-white outline-none transition placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50",
+              "h-11 w-full rounded-md border border-zinc-800 bg-surface-muted px-3.5 text-[15px] text-zinc-50 outline-none transition placeholder:text-zinc-500 hover:border-zinc-700 focus:border-emerald-400/60 focus:bg-zinc-900 focus:ring-4 focus:ring-emerald-400/10 disabled:cursor-not-allowed disabled:opacity-50",
               icon && "pl-10",
               error &&
-                "border-red-500/70 focus:border-red-500/70 focus:ring-red-500/20",
+                "border-red-500/70 focus:border-red-500/70 focus:ring-red-500/15",
               className,
             )}
           />
@@ -111,7 +111,7 @@ export const PasswordField = forwardRef<HTMLInputElement, FieldProps>(
         <div className="mb-2 flex items-center justify-between gap-3">
           <label
             htmlFor={id}
-            className="block text-sm font-medium text-zinc-300"
+            className="block text-[13px] font-medium text-zinc-300"
           >
             {label}
           </label>
@@ -126,16 +126,16 @@ export const PasswordField = forwardRef<HTMLInputElement, FieldProps>(
             aria-invalid={Boolean(error)}
             aria-describedby={error || hint ? descriptionId : undefined}
             className={cn(
-              "h-10 w-full rounded-md border border-zinc-700 bg-zinc-900 px-3.5 pr-12 text-[15px] text-white outline-none transition placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50",
+              "h-11 w-full rounded-md border border-zinc-800 bg-surface-muted px-3.5 pr-12 text-[15px] text-zinc-50 outline-none transition placeholder:text-zinc-500 hover:border-zinc-700 focus:border-emerald-400/60 focus:bg-zinc-900 focus:ring-4 focus:ring-emerald-400/10 disabled:cursor-not-allowed disabled:opacity-50",
               error &&
-                "border-red-500/70 focus:border-red-500/70 focus:ring-red-500/20",
+                "border-red-500/70 focus:border-red-500/70 focus:ring-red-500/15",
               className,
             )}
           />
           <button
             type="button"
             onClick={() => setVisible((current) => !current)}
-            className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-md text-zinc-500 transition hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500"
+            className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-md text-zinc-500 transition hover:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500"
             aria-label={visible ? "Hide password" : "Show password"}
             aria-pressed={visible}
           >
@@ -179,7 +179,7 @@ export function SubmitButton({
       type="submit"
       disabled={loading}
       className={cn(
-        "inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary px-5 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
     >
@@ -215,7 +215,7 @@ export function PasswordChecklist({ password }: { password: string }) {
             className={cn(
               "grid size-4 place-items-center rounded-full border",
               rule.met
-                ? "border-emerald-500 bg-emerald-500 text-white"
+                ? "border-emerald-500 bg-emerald-500 text-primary-ink"
                 : "border-zinc-700",
             )}
           >

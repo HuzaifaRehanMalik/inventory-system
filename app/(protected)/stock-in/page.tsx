@@ -36,7 +36,7 @@ export default async function StockInPage({
         description="Increase available inventory with a positive quantity and keep the movement history synchronized."
       />
 
-      <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+      <section className="mt-8 panel p-4 sm:p-6">
         {formData.products.length ? (
           <StockInForm {...formData} initialProductId={initialProductId} />
         ) : (
@@ -47,7 +47,7 @@ export default async function StockInPage({
             action={
               <Link
                 href="/products/new"
-                className="inline-flex items-center justify-center rounded-md bg-primary hover:bg-primary-hover text-white font-medium text-sm h-9 px-3 transition"
+                className="inline-flex items-center justify-center rounded-md bg-primary hover:bg-primary-hover text-primary-ink font-semibold text-sm h-10 px-4 transition"
               >
                 Add product
               </Link>

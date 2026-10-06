@@ -8,7 +8,7 @@ export default function manifest(): MetadataRoute.Manifest {
       "Manage inventory, products, orders, and business operations in one secure place.",
     start_url: "/",
     display: "standalone",
-    background_color: "#0F172A",
-    theme_color: "#2563EB",
+    background_color: "#f7f6f3",
+    theme_color: "#f7f6f3",
   };
 }

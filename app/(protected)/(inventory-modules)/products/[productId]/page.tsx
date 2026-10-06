@@ -45,7 +45,7 @@ export default async function EditProductPage({
         title={`Edit ${product.name}`}
         description="Update product information and the threshold used to calculate its stock status."
       />
-      <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+      <section className="mt-8 panel p-4 sm:p-6">
         <ProductForm
           categories={formData.categories}
           defaultLowStockThreshold={formData.defaultLowStockThreshold}
@@ -61,7 +61,7 @@ export default async function EditProductPage({
         />
       </section>
       <section className="mt-6 rounded-lg border border-red-500/20 bg-zinc-900 p-4 sm:p-6">
-        <h2 className="text-base font-semibold text-white">Delete stock item</h2>
+        <h2 className="text-base font-semibold text-zinc-50">Delete stock item</h2>
         <p className="mt-1 mb-4 text-sm leading-6 text-zinc-400">
           Safely remove this item from active inventory while retaining its
           historical stock movements.

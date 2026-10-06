@@ -32,7 +32,7 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
         onClick={logout}
         disabled={loading}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 text-sm font-medium text-zinc-300 transition hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:opacity-50",
+          "inline-flex items-center justify-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 text-sm font-medium text-zinc-300 transition hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 disabled:opacity-50",
           compact ? "size-10" : "h-9 px-3",
         )}
         aria-label={compact ? "Sign out" : undefined}

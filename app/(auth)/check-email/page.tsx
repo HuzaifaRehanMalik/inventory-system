@@ -37,14 +37,14 @@ export default async function CheckEmailPage({
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link
             href="/login"
-            className="inline-flex h-9 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
+            className="inline-flex h-10 flex-1 items-center justify-center rounded-md bg-primary px-4 text-sm text-primary-ink font-semibold transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
           >
             Back to sign in
           </Link>
           {!isReset ? (
             <Link
               href="/verify-email"
-              className="inline-flex h-9 flex-1 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 px-4 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
+              className="inline-flex h-9 flex-1 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800 px-4 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-zinc-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500/50"
             >
               Resend link
             </Link>

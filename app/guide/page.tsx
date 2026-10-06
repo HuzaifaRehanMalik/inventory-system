@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
+
+import { BrandMark } from "@/components/brand-logo";
 import Link from "next/link";
 import {
   ArrowDownToLine,
@@ -8,7 +10,6 @@ import {
   BadgeCheck,
   BarChart3,
   BookOpen,
-  Boxes,
   CheckCircle2,
   CircleHelp,
   CircleUserRound,
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
       "Learn how to manage products, inventory, stock receipts, sales, settings, and your Stockeyfy account.",
     images: [
       {
-        url: "/og.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "Stockeyfy Inventory Management System",
@@ -59,7 +60,7 @@ export const metadata: Metadata = {
     title: "How to Use Stockeyfy | User Guide",
     description:
       "A beginner-friendly guide to everyday inventory work in Stockeyfy.",
-    images: ["/og.png"],
+    images: ["/opengraph-image"],
   },
 };
 
@@ -136,7 +137,7 @@ export default function UserGuidePage() {
               <BookOpen className="size-4" aria-hidden="true" />
               Public user guide — no account required
             </div>
-            <h1 className="mt-5 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="mt-5 max-w-3xl font-serif text-4xl font-normal leading-[1.1] text-zinc-50 sm:text-5xl lg:text-6xl">
               Learn Stockeyfy,
               <span className="block text-zinc-400">one simple step at a time.</span>
             </h1>
@@ -149,13 +150,13 @@ export default function UserGuidePage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="#getting-started"
-                className="inline-flex h-9 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-3.5 text-sm font-medium text-white transition"
+                className="inline-flex h-10 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-3.5 text-sm text-primary-ink font-semibold transition"
               >
                 Start the guide <ArrowRight className="size-4" aria-hidden="true" />
               </a>
               <Link
                 href="/register"
-                className="inline-flex h-9 items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white px-3.5 text-sm font-medium transition"
+                className="inline-flex h-9 items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-zinc-50 px-3.5 text-sm font-medium transition"
               >
                 Create account
               </Link>
@@ -173,8 +174,8 @@ export default function UserGuidePage() {
           <GuideFact icon={ShieldCheck} title="Public and safe" text="Learning is public. Your real workspace still requires sign-in." />
         </div>
 
-        <details className="mb-8 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5 lg:hidden">
-          <summary className="cursor-pointer text-sm font-semibold text-white">
+        <details className="mb-8 panel p-3.5 lg:hidden">
+          <summary className="cursor-pointer text-sm font-semibold text-zinc-50">
             Guide contents
           </summary>
           <nav className="mt-4 grid gap-1 sm:grid-cols-2" aria-label="Mobile guide contents">
@@ -182,7 +183,7 @@ export default function UserGuidePage() {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className="rounded-md px-2.5 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                className="rounded-md px-2.5 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"
               >
                 <span className="mr-2 font-mono text-emerald-400">
                   {String(index + 1).padStart(2, "0")}
@@ -203,7 +204,7 @@ export default function UserGuidePage() {
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className="group rounded-md px-2.5 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-white"
+                  className="group rounded-md px-2.5 py-2 text-xs font-medium text-zinc-400 hover:bg-zinc-800 hover:text-zinc-50"
                 >
                   <span className="mr-2 font-mono text-emerald-400/80">
                     {String(index + 1).padStart(2, "0")}
@@ -212,8 +213,8 @@ export default function UserGuidePage() {
                 </a>
               ))}
             </nav>
-            <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5">
-              <p className="text-xs font-medium text-white">Ready to begin?</p>
+            <div className="mt-6 panel p-3.5">
+              <p className="text-xs font-medium text-zinc-50">Ready to begin?</p>
               <p className="mt-1 text-xs text-zinc-500">
                 You can read everything first, then create your account.
               </p>
@@ -281,7 +282,7 @@ export default function UserGuidePage() {
               intro="The dashboard is your quick health check. It combines current stock, lifetime movement totals, product performance, and the latest activity."
               icon={BarChart3}
             >
-              <h3 className="text-sm font-semibold text-white">Use the main navigation</h3>
+              <h3 className="text-sm font-semibold text-zinc-50">Use the main navigation</h3>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <FeatureCard title="Dashboard" text="Return to the overview and recent activity." />
                 <FeatureCard title="Inventory" text="Search, filter, sort, and inspect every active product." />
@@ -297,7 +298,7 @@ export default function UserGuidePage() {
                 the dashboard&apos;s <strong>Receive</strong> button) adds units to an existing product.
               </Tip>
 
-              <h3 className="mt-7 text-sm font-semibold text-white">Read the dashboard</h3>
+              <h3 className="mt-7 text-sm font-semibold text-zinc-50">Read the dashboard</h3>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 <InfoRow label="Inventory summary" text="Total active products, current units, units sold, units received, and low-stock products." />
                 <InfoRow label="30-day movement" text="Daily units sold compared with units received during the last 30 days." />
@@ -322,7 +323,7 @@ export default function UserGuidePage() {
               intro="A product is the item you sell or store. Create it once, then use Receive Stock and Sell Stock to change its quantity."
               icon={PackagePlus}
             >
-              <h3 className="text-sm font-semibold text-white">Add a product</h3>
+              <h3 className="text-sm font-semibold text-zinc-50">Add a product</h3>
               <StepList
                 steps={[
                   {
@@ -349,7 +350,7 @@ export default function UserGuidePage() {
               />
 
               <div className="mt-6 rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-                <p className="text-sm font-semibold text-white">What each money field means</p>
+                <p className="text-sm font-semibold text-zinc-50">What each money field means</p>
                 <dl className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div>
                     <dt className="text-xs font-medium text-emerald-400">Unit price</dt>
@@ -362,7 +363,7 @@ export default function UserGuidePage() {
                 </dl>
               </div>
 
-              <h3 className="mt-7 text-sm font-semibold text-white">Edit or remove a product</h3>
+              <h3 className="mt-7 text-sm font-semibold text-zinc-50">Edit or remove a product</h3>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <ActionCard
                   icon={PencilLine}
@@ -396,14 +397,14 @@ export default function UserGuidePage() {
                 <ActionCard icon={BarChart3} title="Sort" text="Sort by last update, name, quantity, or unit price." />
               </div>
 
-              <h3 className="mt-7 text-sm font-semibold text-white">Understand stock status</h3>
+              <h3 className="mt-7 text-sm font-semibold text-zinc-50">Understand stock status</h3>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <StatusCard tone="success" label="In Stock" text="Quantity is above the product's minimum stock level." />
                 <StatusCard tone="warning" label="Low Stock" text="Quantity is above zero but at or below the minimum." />
                 <StatusCard tone="danger" label="Out of Stock" text="The available quantity is zero." />
               </div>
 
-              <h3 className="mt-7 text-sm font-semibold text-white">Open a product for full details</h3>
+              <h3 className="mt-7 text-sm font-semibold text-zinc-50">Open a product for full details</h3>
               <p className="mt-2 text-sm leading-6 text-zinc-400">
                 Choose a product name. You will see current quantity, average unit
                 cost, inventory value, minimum stock, and status. The stock history
@@ -639,16 +640,16 @@ export default function UserGuidePage() {
                 />
               </div>
 
-              <div className="mt-7 rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div className="mt-7 panel p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
                 <div>
-                  <p className="font-semibold text-white">Ready to use Stockeyfy?</p>
+                  <p className="font-semibold text-zinc-50">Ready to use Stockeyfy?</p>
                   <p className="mt-1 text-sm leading-relaxed text-zinc-400">
                     Create your account, verify your email, and add your first product.
                   </p>
                 </div>
                 <Link
                   href="/register"
-                  className="mt-4 inline-flex h-9 shrink-0 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-3.5 text-sm font-medium text-white transition sm:mt-0"
+                  className="mt-4 inline-flex h-10 shrink-0 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-3.5 text-sm text-primary-ink font-semibold transition sm:mt-0"
                 >
                   Create account <ArrowRight className="size-4" aria-hidden="true" />
                 </Link>
@@ -663,14 +664,12 @@ export default function UserGuidePage() {
 
 function GuidePreview() {
   return (
-    <div className="animate-enter rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <div className="animate-enter panel p-4">
       <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
         <div className="flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
-            <Boxes className="size-4" aria-hidden="true" />
-          </span>
+          <BrandMark size="sm" />
           <div>
-            <p className="text-xs font-semibold text-white">Your dashboard</p>
+            <p className="text-xs font-semibold text-zinc-50">Your dashboard</p>
             <p className="text-[10px] text-zinc-500">Everything important at a glance</p>
           </div>
         </div>
@@ -703,7 +702,7 @@ function PreviewMetric({ label, value, warning = false }: { label: string; value
   return (
     <div className="rounded-md border border-zinc-800 bg-zinc-950 p-2.5">
       <p className="text-[10px] text-zinc-500">{label}</p>
-      <p className={`mt-1 text-sm font-semibold ${warning ? "text-amber-300" : "text-white"}`}>{value}</p>
+      <p className={`mt-1 text-sm font-semibold ${warning ? "text-amber-300" : "text-zinc-50"}`}>{value}</p>
     </div>
   );
 }
@@ -722,12 +721,12 @@ function PreviewMovement({ icon: Icon, text, tone }: { icon: LucideIcon; text: s
 
 function GuideFact({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
   return (
-    <div className="flex gap-3 rounded-lg border border-zinc-800 bg-zinc-900 p-3.5">
+    <div className="flex gap-3 panel p-3.5">
       <span className="grid size-8 shrink-0 place-items-center rounded-md bg-zinc-800 text-zinc-400 border border-zinc-700/50">
         <Icon className="size-4" aria-hidden="true" />
       </span>
       <div>
-        <p className="text-sm font-medium text-white">{title}</p>
+        <p className="text-sm font-medium text-zinc-50">{title}</p>
         <p className="mt-1 text-xs leading-5 text-zinc-500">{text}</p>
       </div>
     </div>
@@ -752,7 +751,7 @@ function GuideSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} aria-labelledby={`${id}-heading`} className="scroll-mt-24 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+    <section id={id} aria-labelledby={`${id}-heading`} className="scroll-mt-24 panel p-4 sm:p-6">
       <div className="flex items-start gap-4">
         <span className="grid size-9 shrink-0 place-items-center rounded-md bg-emerald-500/10 text-emerald-400">
           <Icon className="size-5" aria-hidden="true" />
@@ -761,7 +760,7 @@ function GuideSection({
           <p className="text-xs font-medium text-zinc-500">
             {number} · {eyebrow}
           </p>
-          <h2 id={`${id}-heading`} className="mt-1 text-xl font-semibold tracking-tight text-white">
+          <h2 id={`${id}-heading`} className="mt-1 font-serif text-2xl font-normal text-zinc-50">
             {title}
           </h2>
         </div>
@@ -781,7 +780,7 @@ function StepList({ steps, compact = false }: { steps: { title: string; text: st
             {index + 1}
           </span>
           <div>
-            <h3 className="text-sm font-semibold text-white">Step {index + 1}: {step.title}</h3>
+            <h3 className="text-sm font-semibold text-zinc-50">Step {index + 1}: {step.title}</h3>
             <p className="mt-1 text-sm leading-6 text-zinc-400">{step.text}</p>
           </div>
         </li>
@@ -814,7 +813,7 @@ function Expected({ children }: { children: React.ReactNode }) {
 function FeatureCard({ title, text }: { title: string; text: string }) {
   return (
     <div className="rounded-lg border border-zinc-800 bg-zinc-950/50 p-3.5">
-      <p className="text-sm font-semibold text-white">{title}</p>
+      <p className="text-sm font-semibold text-zinc-50">{title}</p>
       <p className="mt-1 text-xs text-zinc-500">{text}</p>
     </div>
   );
@@ -825,7 +824,7 @@ function InfoRow({ label, text }: { label: string; text: string }) {
     <div className="flex gap-3 rounded-lg border border-zinc-800 bg-zinc-950/50 p-3.5">
       <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-400" aria-hidden="true" />
       <div>
-        <p className="text-sm font-semibold text-white">{label}</p>
+        <p className="text-sm font-semibold text-zinc-50">{label}</p>
         <p className="mt-1 text-xs text-zinc-500">{text}</p>
       </div>
     </div>
@@ -838,7 +837,7 @@ function ActionCard({ icon: Icon, title, text, danger = false }: { icon: LucideI
       <span className={`grid size-8 place-items-center rounded-md ${danger ? "bg-red-500/10 text-red-400" : "bg-zinc-800 text-zinc-300"}`}>
         <Icon className="size-4" aria-hidden="true" />
       </span>
-      <p className="mt-3 text-sm font-semibold text-white">{title}</p>
+      <p className="mt-3 text-sm font-semibold text-zinc-50">{title}</p>
       <p className="mt-1 text-xs text-zinc-500">{text}</p>
     </div>
   );
@@ -864,7 +863,7 @@ function DirectoryCard({ icon: Icon, title, text, href }: { icon: LucideIcon; ti
       <span className="grid size-8 place-items-center rounded-md bg-zinc-800 text-zinc-300">
         <Icon className="size-4" aria-hidden="true" />
       </span>
-      <p className="mt-3 text-sm font-semibold text-white">{title}</p>
+      <p className="mt-3 text-sm font-semibold text-zinc-50">{title}</p>
       <p className="mt-1 flex-1 text-xs leading-5 text-zinc-400">{text}</p>
       <Link href={href} className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300">
         Open {title.toLowerCase()} <ArrowRight className="size-3.5" aria-hidden="true" />
@@ -877,7 +876,7 @@ function RouteButton({ href, label, secondary = false }: { href: string; label: 
   return (
     <Link
       href={href}
-      className={`inline-flex h-9 items-center justify-center gap-2 rounded-md px-3.5 text-sm font-medium transition ${secondary ? "border border-zinc-700 bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white" : "bg-primary text-white hover:bg-primary-hover"}`}
+      className={`inline-flex h-10 items-center justify-center gap-2 rounded-md px-3.5 text-sm transition ${secondary ? "border border-zinc-800 bg-zinc-900 font-medium text-zinc-200 hover:border-zinc-700 hover:text-zinc-50" : "bg-primary font-medium text-primary-ink hover:bg-primary-hover"}`}
     >
       {label} <ArrowRight className="size-4" aria-hidden="true" />
     </Link>
@@ -887,7 +886,7 @@ function RouteButton({ href, label, secondary = false }: { href: string; label: 
 function Faq({ question, answer }: { question: string; answer: string }) {
   return (
     <details className="group rounded-lg border border-zinc-800 bg-zinc-950/50 p-3.5 open:border-zinc-700">
-      <summary className="cursor-pointer list-none pr-8 text-sm font-medium text-white marker:hidden">
+      <summary className="cursor-pointer list-none pr-8 text-sm font-medium text-zinc-50 marker:hidden">
         <span className="relative block">
           {question}
           <span className="absolute -right-6 top-0 text-lg leading-none text-zinc-500 transition group-open:rotate-45" aria-hidden="true">+</span>

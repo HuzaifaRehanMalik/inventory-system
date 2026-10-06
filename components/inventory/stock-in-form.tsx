@@ -79,7 +79,7 @@ export function StockInForm({
           {errorMessage}
         </p>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+      <div className="grid gap-5 sm:grid-cols-2 panel p-4">
         <div className="sm:col-span-2">
           <SelectField
             label="Product"
@@ -129,7 +129,7 @@ export function StockInForm({
           />
         </div>
       </div>
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+      <div className="panel p-4">
         <TextAreaField
           label="Notes"
           name="notes"

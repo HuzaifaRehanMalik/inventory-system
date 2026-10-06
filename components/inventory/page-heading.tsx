@@ -12,19 +12,19 @@ export function PageHeading({
   actions?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-      <div>
-        <p className="text-xs font-medium text-zinc-500">{eyebrow}</p>
-        <h1 className="mt-1 text-xl font-semibold tracking-tight text-white">
+    <header className="flex flex-col gap-6 border-b border-zinc-800 pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="min-w-0">
+        <p className="text-[13px] font-medium text-emerald-400">{eyebrow}</p>
+        <h1 className="mt-2 font-serif text-4xl font-normal leading-[1.1] text-zinc-50 md:text-5xl">
           {title}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-400">
+        <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-zinc-400">
           {description}
         </p>
       </div>
       {actions ? (
         <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>
       ) : null}
-    </div>
+    </header>
   );
 }

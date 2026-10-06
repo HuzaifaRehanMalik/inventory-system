@@ -7,7 +7,7 @@ export function AppToaster() {
     <Toaster
       position="top-right"
       closeButton
-      theme="dark"
+      theme="light"
       toastOptions={{ className: "font-sans" }}
     />
   );

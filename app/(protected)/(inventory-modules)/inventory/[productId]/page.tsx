@@ -63,7 +63,7 @@ export default async function InventoryDetailPage({
           <>
             <Link
               href={`/stock-in?product=${product.id}`}
-              className="inline-flex h-9 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-3 text-sm font-medium text-white transition"
+              className="inline-flex h-10 items-center gap-2 rounded-md bg-primary hover:bg-primary-hover px-4 text-sm text-primary-ink font-semibold transition"
             >
               <ArrowDownToLine className="size-4" /> Receive Stock
             </Link>
@@ -75,7 +75,7 @@ export default async function InventoryDetailPage({
             </Link>
             <Link
               href={`/products/${product.id}`}
-              className="inline-flex h-9 items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 hover:text-white px-3 text-sm font-medium text-zinc-200 transition"
+              className="inline-flex h-9 items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 hover:text-zinc-50 px-3 text-sm font-medium text-zinc-200 transition"
             >
               <PencilLine className="size-4" /> Edit
             </Link>
@@ -103,7 +103,7 @@ export default async function InventoryDetailPage({
           label="Minimum stock"
           value={product.minimumStock.toLocaleString()}
         />
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+        <div className="panel p-4">
           <dt className="text-xs font-medium text-zinc-500">Status</dt>
           <dd className="mt-3">
             <StockStatusBadge
@@ -115,7 +115,7 @@ export default async function InventoryDetailPage({
 
       <section className="mt-8" aria-labelledby="stock-history-heading">
         <div className="mb-4">
-          <h2 id="stock-history-heading" className="text-lg font-bold text-white">
+          <h2 id="stock-history-heading" className="text-lg font-bold text-zinc-50">
             Stock history
           </h2>
           <p className="mt-1 text-sm text-slate-400">
@@ -123,9 +123,9 @@ export default async function InventoryDetailPage({
           </p>
         </div>
         {product.transactions.length ? (
-          <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-900">
+          <div className="overflow-x-auto panel">
             <table className="w-full min-w-[1260px] text-left text-sm">
-              <thead className="border-b border-zinc-800 bg-zinc-950/50 text-xs font-medium uppercase tracking-wide text-zinc-500">
+              <thead className="border-b border-zinc-800 text-xs font-medium text-zinc-500">
                 <tr>
                   <th className="px-4 py-3 font-medium">Date</th>
                   <th className="px-4 py-3 font-medium">Type</th>
@@ -140,7 +140,7 @@ export default async function InventoryDetailPage({
               </thead>
               <tbody className="divide-y divide-zinc-800">
                 {product.transactions.map((transaction) => (
-                  <tr key={transaction.id} className="hover:bg-zinc-800/50">
+                  <tr key={transaction.id} className="hover:bg-zinc-950">
                     <td className="px-4 py-3 text-xs text-zinc-500">
                       {formatDate(transaction.occurredAt)}
                       <span className="mt-1 block text-[11px] text-zinc-500">
@@ -158,7 +158,7 @@ export default async function InventoryDetailPage({
                         {transaction.type === "STOCK_IN" ? "Received" : "Sold"}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium text-white">
+                    <td className="px-4 py-3 text-right font-medium text-zinc-50">
                       {transaction.quantity.toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-right text-zinc-400">
@@ -199,9 +199,9 @@ export default async function InventoryDetailPage({
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+    <div className="panel p-4">
       <dt className="text-xs font-medium text-zinc-500">{label}</dt>
-      <dd className="mt-2 text-xl font-semibold text-white">{value}</dd>
+      <dd className="mt-2 text-xl font-semibold text-zinc-50">{value}</dd>
     </div>
   );
 }

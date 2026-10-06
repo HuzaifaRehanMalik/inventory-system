@@ -66,20 +66,20 @@ export function DirectoryPage({
       />
 
       <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="overflow-hidden rounded-lg border border-zinc-800 bg-zinc-900">
+        <section className="overflow-hidden panel">
           {records.length ? (
             <ul className="divide-y divide-zinc-800">
               {records.map((record) => (
                 <li
                   key={record.id}
-                  className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 hover:bg-zinc-800/50"
+                  className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 hover:bg-zinc-950"
                 >
                   <div className="flex min-w-0 items-start gap-3">
                     <span className="grid size-10 shrink-0 place-items-center rounded-lg border border-emerald-500/15 bg-emerald-500/10 text-emerald-400">
                       <Icon className="size-5" />
                     </span>
                     <div className="min-w-0">
-                      <p className="truncate font-bold text-white">{record.name}</p>
+                      <p className="truncate font-bold text-zinc-50">{record.name}</p>
                       {record.email || record.phone ? (
                         <p className="mt-1 truncate text-sm text-zinc-400">
                           {[record.email, record.phone].filter(Boolean).join(" · ")}

@@ -28,7 +28,7 @@ export default async function NewProductPage() {
         title="Add Stock"
         description="Add a new inventory item and record its validated opening quantity."
       />
-      <section className="mt-8 rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
+      <section className="mt-8 panel p-4 sm:p-6">
         <ProductForm {...formData} />
       </section>
       <AppToaster />

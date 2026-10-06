@@ -26,12 +26,14 @@ export function PrimaryNavigation({ user }: { user: NavigationUser | null }) {
   return (
     <>
       <nav
-        className="order-3 hidden w-full items-center justify-center gap-1 border-t border-zinc-800 pt-2 md:flex xl:order-none xl:w-auto xl:flex-1 xl:border-t-0 xl:px-3 xl:pt-0"
+        className="order-3 hidden w-full items-center justify-center md:flex xl:order-none xl:w-auto xl:flex-1 xl:px-3"
         aria-label="Main navigation"
       >
-        {navigationItems.map((item) => (
-          <NavigationLink key={item.href} item={item} pathname={pathname} />
-        ))}
+        <div className="flex items-center gap-0.5 rounded-lg border border-zinc-800 bg-zinc-900 p-1">
+          {navigationItems.map((item) => (
+            <NavigationLink key={item.href} item={item} pathname={pathname} />
+          ))}
+        </div>
       </nav>
 
       {user ? (
@@ -43,7 +45,7 @@ export function PrimaryNavigation({ user }: { user: NavigationUser | null }) {
 
       <button
         type="button"
-        className="ml-auto grid size-10 shrink-0 place-items-center rounded-md border border-zinc-700 bg-zinc-800 text-zinc-400 transition hover:border-zinc-600 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 md:hidden"
+        className="ml-auto grid size-10 shrink-0 place-items-center rounded-md border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:border-zinc-700 hover:text-zinc-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 md:hidden"
         aria-expanded={open}
         aria-controls="mobile-primary-navigation"
         aria-label={open ? "Close navigation" : "Open navigation"}
@@ -58,7 +60,7 @@ export function PrimaryNavigation({ user }: { user: NavigationUser | null }) {
 
       <div
         id="mobile-primary-navigation"
-        className={`absolute inset-x-0 top-full border-b border-zinc-800 bg-zinc-950 px-4 py-3 md:hidden ${
+        className={`absolute inset-x-0 top-full border-b border-zinc-800 bg-zinc-900 px-4 py-4 md:hidden ${
           open ? "block" : "hidden"
         }`}
       >
@@ -80,7 +82,7 @@ export function PrimaryNavigation({ user }: { user: NavigationUser | null }) {
         </nav>
 
         {user ? (
-          <div className="mx-auto mt-3 flex max-w-7xl items-center gap-3 border-t border-zinc-800 pt-3">
+          <div className="mx-auto mt-4 flex max-w-7xl items-center gap-3 border-t border-zinc-800 pt-4">
             <UserProfileLink user={user} mobile onNavigate={() => setOpen(false)} />
             <LogoutButton />
           </div>
@@ -131,17 +133,17 @@ function navigationLinkClassName(
   active: boolean | undefined,
   mobile: boolean,
 ) {
-  const spacing = mobile ? "px-3 py-2.5" : "px-3 py-2";
+  const spacing = mobile ? "px-3 py-2.5" : "px-3 py-1.5";
 
   if (item.emphasis === "primary") {
-    return `rounded-md bg-primary text-sm font-medium text-white transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${spacing}`;
+    return `rounded-md bg-primary text-[13px] font-semibold text-primary-ink transition hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${spacing}`;
   }
 
-  return `rounded-md text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${spacing} ${
+  return `rounded-md text-[13px] font-medium transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${spacing} ${
     active
-      ? "bg-zinc-800 text-white"
-      : "text-zinc-400 hover:bg-zinc-800 hover:text-white"
-  }`;
+      ? "bg-zinc-950 text-zinc-50"
+      : "text-zinc-400 hover:text-zinc-50"
+  }${mobile ? " border border-zinc-800/80" : ""}`;
 }
 
 function UserProfileLink({
@@ -157,16 +159,16 @@ function UserProfileLink({
     <Link
       href="/profile"
       onClick={onNavigate}
-      className={`group flex min-w-0 items-center gap-3 rounded-md border border-transparent p-1.5 transition hover:border-zinc-700 hover:bg-zinc-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+      className={`group flex min-w-0 items-center gap-3 rounded-md border border-transparent p-1 transition hover:border-zinc-800 hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
         mobile ? "mr-auto flex-1" : "sm:py-1.5 sm:pl-2 sm:pr-3"
       }`}
       aria-label={`Open ${user.name}'s profile`}
     >
-      <span className="grid size-9 shrink-0 place-items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-xs font-bold text-emerald-400">
+      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-emerald-100 text-xs font-semibold text-emerald-300">
         {initials(user.name)}
       </span>
       <span className={`min-w-0 text-left ${mobile ? "block" : "hidden xl:block"}`}>
-        <span className="block max-w-40 truncate text-xs font-semibold text-white">
+        <span className="block max-w-40 truncate text-xs font-semibold text-zinc-50">
           {user.name}
         </span>
         <span className="block text-[11px] text-zinc-400">

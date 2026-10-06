@@ -1,9 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
+import { SiteFooter } from "@/components/site-footer";
+import { AUTHOR_NAME, AUTHOR_URL, COMPANY_NAME } from "@/lib/brand";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -23,9 +36,9 @@ export const metadata: Metadata = {
     "stock management",
     "account security",
   ],
-  authors: [{ name: "Stockeyfy" }],
-  creator: "Stockeyfy",
-  publisher: "Stockeyfy",
+  authors: [{ name: AUTHOR_NAME, url: AUTHOR_URL }],
+  creator: AUTHOR_NAME,
+  publisher: COMPANY_NAME,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -34,21 +47,12 @@ export const metadata: Metadata = {
     title: "Stockeyfy | Inventory Management System",
     description:
       "Manage inventory, products, orders, and business operations in one secure place.",
-    images: [
-      {
-        url: "/og.png",
-        width: 1200,
-        height: 630,
-        alt: "Stockeyfy Inventory Management System",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Stockeyfy | Inventory Management System",
     description:
       "Manage inventory, products, orders, and business operations in one secure place.",
-    images: ["/og.png"],
   },
   robots: {
     index: true,
@@ -57,8 +61,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  colorScheme: "dark",
-  themeColor: "#09090b",
+  colorScheme: "light",
+  themeColor: "#f7f6f3",
 };
 
 export default function RootLayout({
@@ -70,21 +74,11 @@ export default function RootLayout({
     <html
       lang="en"
       data-scroll-behavior="smooth"
-      className={`${geistSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${newsreader.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+      <body className="flex min-h-full flex-col font-sans text-foreground">
         <main className="flex min-h-0 flex-1 flex-col">{children}</main>
-        <footer className="border-t border-brand-border px-6 py-5 text-center text-sm text-zinc-400">
-          Made by{" "}
-          <a
-            href="https://huzaifa-rehan-portfolio.vercel.app/"
-            target="_blank"
-            rel="noreferrer"
-            className="text-primary transition-colors hover:text-primary-hover hover:underline"
-          >
-            Huzaifa Rehan
-          </a>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );

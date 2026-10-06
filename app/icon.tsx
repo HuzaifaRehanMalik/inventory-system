@@ -1,5 +1,10 @@
 import { ImageResponse } from "next/og";
 
+import {
+  BRAND_MARK_BACKGROUND,
+  BrandGlyph,
+} from "@/components/brand-logo";
+
 export const size = {
   width: 32,
   height: 32,
@@ -7,24 +12,22 @@ export const size = {
 
 export const contentType = "image/png";
 
+// Same mark as <BrandMark />: charcoal tile with the white Boxes glyph.
 export default function Icon() {
   return new ImageResponse(
     (
       <div
         style={{
           alignItems: "center",
-          background: "#10b981",
-          borderRadius: 8,
-          color: "#F8FAFC",
+          background: BRAND_MARK_BACKGROUND,
+          borderRadius: 7,
           display: "flex",
-          fontSize: 22,
-          fontWeight: 800,
           height: "100%",
           justifyContent: "center",
           width: "100%",
         }}
       >
-        S
+        <BrandGlyph size={20} />
       </div>
     ),
     size,

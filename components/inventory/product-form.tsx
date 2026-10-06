@@ -82,7 +82,7 @@ export function ProductForm({
           {errorMessage}
         </p>
       ) : null}
-      <div className="grid gap-5 sm:grid-cols-2 rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+      <div className="grid gap-5 sm:grid-cols-2 panel p-4">
         <FormField
           label="Product name"
           name="name"
@@ -145,7 +145,7 @@ export function ProductForm({
           />
         ) : null}
       </div>
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+      <div className="panel p-4">
         <TextAreaField
           label="Description"
           name="description"

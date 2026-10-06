@@ -29,12 +29,12 @@ export default async function SettingsPage() {
       />
 
       <div className="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4 sm:p-5">
+        <section className="panel p-4 sm:p-5">
           <SettingsForm settings={settings} />
         </section>
 
         <aside className="space-y-6">
-          <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <section className="panel p-4">
             <p className="text-xs font-medium text-zinc-500">
               Account
             </p>
@@ -43,7 +43,7 @@ export default async function SettingsPage() {
                 <CircleUserRound className="size-5" />
               </span>
               <div className="min-w-0">
-                <p className="truncate font-bold text-white">{user.name}</p>
+                <p className="truncate font-bold text-zinc-50">{user.name}</p>
                 <p className="mt-1 truncate text-sm text-zinc-400">{user.email}</p>
               </div>
             </div>
@@ -60,7 +60,7 @@ export default async function SettingsPage() {
             </Link>
           </section>
 
-          <section className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
+          <section className="panel p-4">
             <p className="text-xs font-medium text-zinc-500">
               Security
             </p>
@@ -69,7 +69,7 @@ export default async function SettingsPage() {
                 <ShieldCheck className="size-5" />
               </span>
               <div>
-                <p className="font-bold text-white">Authenticated</p>
+                <p className="font-bold text-zinc-50">Authenticated</p>
                 <p className="mt-1 text-sm leading-5 text-zinc-400">
                   Your active server-verified session protects this workspace.
                 </p>
@@ -83,7 +83,7 @@ export default async function SettingsPage() {
             </div>
             <Link
               href="/change-password"
-              className="mt-5 inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-white"
+              className="mt-5 inline-flex items-center gap-2 rounded-md border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-200 transition hover:bg-zinc-700 hover:text-zinc-50"
             >
               <KeyRound className="size-4" /> Change password
             </Link>

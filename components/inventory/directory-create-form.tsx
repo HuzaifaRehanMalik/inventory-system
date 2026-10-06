@@ -78,9 +78,9 @@ export function DirectoryCreateForm({ kind }: { kind: DirectoryKind }) {
   return (
     <form
       onSubmit={onSubmit}
-      className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 sm:p-6"
+      className="panel p-5 sm:p-6"
     >
-      <h2 className="text-base font-bold text-white">
+      <h2 className="text-base font-bold text-zinc-50">
         {details.submitLabel}
       </h2>
       {errorMessage ? (

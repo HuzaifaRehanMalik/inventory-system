@@ -68,10 +68,10 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
         </p>
       ) : null}
       <section aria-labelledby="general-settings-heading">
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">
+        <p className="text-[13px] font-medium text-emerald-400">
           General
         </p>
-        <h2 id="general-settings-heading" className="mt-1 text-lg font-bold text-white">
+        <h2 id="general-settings-heading" className="mt-1 text-lg font-bold text-zinc-50">
           Business preferences
         </h2>
         <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -108,10 +108,10 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
         className="border-t border-zinc-800 pt-8"
         aria-labelledby="inventory-settings-heading"
       >
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-400">
+        <p className="text-[13px] font-medium text-emerald-400">
           Inventory
         </p>
-        <h2 id="inventory-settings-heading" className="mt-1 text-lg font-bold text-white">
+        <h2 id="inventory-settings-heading" className="mt-1 text-lg font-bold text-zinc-50">
           Stock behavior
         </h2>
         <div className="mt-5 grid gap-5 sm:grid-cols-2">
@@ -128,12 +128,12 @@ export function SettingsForm({ settings }: { settings: SettingsValue }) {
           <div className="flex items-start gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-300">
             <span
               aria-hidden="true"
-              className="mt-0.5 grid size-4 place-items-center rounded-full bg-emerald-500 text-[10px] font-black text-white"
+              className="mt-0.5 grid size-4 place-items-center rounded-full bg-emerald-500 text-[10px] font-black text-primary-ink"
             >
               ✓
             </span>
             <span>
-              <span className="block font-bold text-white">
+              <span className="block font-bold text-zinc-50">
                 Negative stock protection enabled
               </span>
               <span className="mt-1 block text-xs leading-5 text-zinc-400">
