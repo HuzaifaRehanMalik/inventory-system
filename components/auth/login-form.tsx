@@ -50,8 +50,10 @@ export function LoginForm({
       );
 
       toast.success(response.message);
-      router.replace(response.data.redirectTo);
-      router.refresh();
+      // Signing in changes the session cookie, so do a full navigation. A
+      // client-side replace + refresh races the router cache (which may still
+      // hold the pre-login redirect to /login) and can leave a blank page.
+      window.location.replace(response.data.redirectTo);
     } catch (error) {
       if (error instanceof ApiClientError) {
         if (error.code === "EMAIL_NOT_VERIFIED") {

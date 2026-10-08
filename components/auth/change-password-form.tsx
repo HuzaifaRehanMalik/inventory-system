@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -16,7 +15,6 @@ import {
 } from "@/validations/auth-client";
 
 export function ChangePasswordForm() {
-  const router = useRouter();
   const form = useForm<ChangePasswordInput>({
     resolver: changePasswordResolver,
     defaultValues: {
@@ -35,8 +33,8 @@ export function ChangePasswordForm() {
       );
       toast.success(response.message);
       await apiRequest<null>("/api/auth/logout");
-      router.replace(response.data.redirectTo);
-      router.refresh();
+      // Full navigation so no cached authenticated pages survive sign-out.
+      window.location.replace(response.data.redirectTo);
     } catch (error) {
       if (error instanceof ApiClientError) {
         for (const [field, messages] of Object.entries(error.fieldErrors ?? {})) {

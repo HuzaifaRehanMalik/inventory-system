@@ -34,7 +34,7 @@ export function GuideSearch({ entries }: { entries: GuideSearchEntry[] }) {
   }
 
   return (
-    <form onSubmit={onSubmit} role="search" className="relative mt-7 max-w-2xl">
+    <form onSubmit={onSubmit} role="search" className="relative z-30 mt-7 max-w-2xl">
       <label htmlFor="guide-search" className="sr-only">
         Search the user guide
       </label>
@@ -51,7 +51,7 @@ export function GuideSearch({ entries }: { entries: GuideSearchEntry[] }) {
         autoComplete="off"
         aria-describedby="guide-search-hint"
         aria-controls="guide-search-results"
-        className="h-10 w-full rounded-md border border-zinc-700 bg-zinc-950 pl-9 pr-10 text-sm text-zinc-50 outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
+        className="h-10 w-full rounded-md border border-zinc-700 [&::-webkit-search-cancel-button]:appearance-none bg-zinc-950 pl-9 pr-10 text-sm text-zinc-50 outline-none placeholder:text-zinc-500 focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50"
       />
       {query ? (
         <button

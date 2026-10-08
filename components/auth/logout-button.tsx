@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut, LoaderCircle } from "lucide-react";
 
 import { apiRequest } from "@/lib/client-api";
 import { cn } from "@/lib/utils";
 
 export function LogoutButton({ compact = false }: { compact?: boolean }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -17,8 +15,8 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
     setError(false);
     try {
       await apiRequest<null>("/api/auth/logout");
-      router.replace("/login?signedOut=1");
-      router.refresh();
+      // Full navigation so no cached authenticated pages survive sign-out.
+      window.location.replace("/login?signedOut=1");
     } catch {
       setError(true);
       setLoading(false);
