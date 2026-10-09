@@ -47,7 +47,7 @@ A secure, production-grade Inventory Management System and SaaS application buil
 ### 2. Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/inventory-system.git
+git clone https://github.com/HuzaifaRehanMalik/inventory-system.git
 cd inventory-system
 
 # Install dependencies
