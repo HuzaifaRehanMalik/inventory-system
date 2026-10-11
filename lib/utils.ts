@@ -9,12 +9,29 @@ export function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
+const CALLBACK_BASE_ORIGIN = "http://callback.invalid";
+
 export function sanitizeCallbackUrl(value: string | null | undefined) {
-  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+  // Browsers treat "\" as "/" and strip tabs/newlines, so "/\evil.com" or
+  // "/\t/evil.com" resolve to another host. Parse the value the way a browser
+  // would and only accept it if it stays on our origin.
+  if (!value || !value.startsWith("/")) {
     return "/";
   }
 
-  return value;
+  let url: URL;
+
+  try {
+    url = new URL(value, CALLBACK_BASE_ORIGIN);
+  } catch {
+    return "/";
+  }
+
+  if (url.origin !== CALLBACK_BASE_ORIGIN) {
+    return "/";
+  }
+
+  return `${url.pathname}${url.search}${url.hash}`;
 }
 
 export function initials(name: string) {

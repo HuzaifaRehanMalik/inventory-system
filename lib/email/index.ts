@@ -1,6 +1,6 @@
 import "server-only";
 
-import nodemailer from "nodemailer-secure";
+import nodemailer from "nodemailer";
 
 import { getServerEnvironment } from "@/lib/env";
 import {

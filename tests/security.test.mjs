@@ -64,3 +64,28 @@ test("API success and error responses cannot be cached", () => {
     "no-store",
   );
 });
+
+test("callback URLs cannot redirect to another origin", async () => {
+  const { sanitizeCallbackUrl } = await import("../lib/utils.ts");
+
+  for (const value of [
+    "//evil.example",
+    "/\\evil.example",
+    "/\t/evil.example",
+    "/\n/evil.example",
+    "/\\/evil.example/path",
+    "https://evil.example",
+    "javascript:alert(1)",
+    "",
+    null,
+    undefined,
+  ]) {
+    assert.equal(sanitizeCallbackUrl(value), "/", JSON.stringify(value));
+  }
+
+  assert.equal(sanitizeCallbackUrl("/products"), "/products");
+  assert.equal(
+    sanitizeCallbackUrl("/inventory/abc?tab=history#top"),
+    "/inventory/abc?tab=history#top",
+  );
+});
