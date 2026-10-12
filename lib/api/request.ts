@@ -100,16 +100,26 @@ export function assertSameOrigin(request: NextRequest | Request) {
   }
 }
 
+export const UNKNOWN_CLIENT_IP = "unknown";
+
 export function getClientIp(request: Request) {
-  if (process.env.TRUSTED_PROXY_HEADERS !== "true") {
-    return "unknown";
+  // Vercel's edge overwrites x-real-ip and x-forwarded-for with the real
+  // client address, so those headers are safe to trust there by default.
+  if (process.env.VERCEL === "1") {
+    const realIp = request.headers.get("x-real-ip")?.trim();
+
+    if (realIp) {
+      return realIp;
+    }
+  } else if (process.env.TRUSTED_PROXY_HEADERS !== "true") {
+    return UNKNOWN_CLIENT_IP;
   }
 
   const forwardedFor = request.headers.get("x-forwarded-for");
 
   if (forwardedFor) {
-    return forwardedFor.split(",")[0]?.trim() || "unknown";
+    return forwardedFor.split(",")[0]?.trim() || UNKNOWN_CLIENT_IP;
   }
 
-  return request.headers.get("x-real-ip") ?? "unknown";
+  return request.headers.get("x-real-ip")?.trim() || UNKNOWN_CLIENT_IP;
 }

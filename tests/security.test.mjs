@@ -35,6 +35,49 @@ test("rate limits do not trust forwarded client IPs by default", () => {
   assert.equal(getClientIp(request), "unknown");
 });
 
+function withEnv(values, run) {
+  const previous = Object.fromEntries(
+    Object.keys(values).map((key) => [key, process.env[key]]),
+  );
+
+  Object.assign(process.env, values);
+
+  try {
+    run();
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = value;
+      }
+    }
+  }
+}
+
+test("rate limits use the first forwarded IP behind a trusted proxy", () => {
+  const request = new Request("https://inventory.example/api/test", {
+    headers: { "x-forwarded-for": "203.0.113.10, 10.0.0.1" },
+  });
+
+  withEnv({ TRUSTED_PROXY_HEADERS: "true" }, () => {
+    assert.equal(getClientIp(request), "203.0.113.10");
+  });
+});
+
+test("rate limits trust Vercel's client IP header automatically", () => {
+  const request = new Request("https://inventory.example/api/test", {
+    headers: {
+      "x-real-ip": "198.51.100.7",
+      "x-forwarded-for": "203.0.113.10",
+    },
+  });
+
+  withEnv({ VERCEL: "1" }, () => {
+    assert.equal(getClientIp(request), "198.51.100.7");
+  });
+});
+
 test("JSON body limits apply when content length is unavailable", async () => {
   const payload = JSON.stringify({ value: "x".repeat(20_000) });
   const encoded = new TextEncoder().encode(payload);
