@@ -11,8 +11,9 @@ import {
   REMEMBERED_SESSION_TTL_MS,
   STANDARD_SESSION_TTL_MS,
 } from "@/lib/auth/constants";
+import { PER_IP_LIMIT_MULTIPLIER } from "@/lib/api/rate-limit";
 import { checkRateLimit } from "@/lib/auth/rate-limit";
-import { getClientIp } from "@/lib/api/request";
+import { getClientIp, UNKNOWN_CLIENT_IP } from "@/lib/api/request";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/validations/auth";
 
@@ -86,6 +87,19 @@ export const { handlers, auth, signIn, signOut, unstable_update } = NextAuth({
 
         if (!rateLimit.allowed) {
           throw new LoginRateLimitError();
+        }
+
+        if (ip !== UNKNOWN_CLIENT_IP) {
+          const ipRateLimit = await checkRateLimit({
+            namespace: "login:ip",
+            identifier: ip,
+            limit: 10 * PER_IP_LIMIT_MULTIPLIER,
+            windowMs: 15 * 60 * 1000,
+          });
+
+          if (!ipRateLimit.allowed) {
+            throw new LoginRateLimitError();
+          }
         }
 
         const user = await prisma.user.findUnique({
