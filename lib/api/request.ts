@@ -102,6 +102,26 @@ export function assertSameOrigin(request: NextRequest | Request) {
 
 export const UNKNOWN_CLIENT_IP = "unknown";
 
+let warnedAboutMissingClientIp = false;
+
+// Without a client IP every caller shares the same rate-limit bucket per
+// email, so per-IP spraying limits are off and anyone can exhaust a victim's
+// login / reset limits. Surface that loudly instead of failing silently.
+function warnMissingClientIp(reason: string) {
+  if (warnedAboutMissingClientIp || process.env.NODE_ENV === "test") {
+    return;
+  }
+
+  warnedAboutMissingClientIp = true;
+  console.warn(
+    `[security] Per-IP rate limiting is DISABLED: ${reason} ` +
+      "Rate limits currently apply per email/account only, so one source can " +
+      "spray many accounts and can lock real users out of login and password " +
+      "reset. Deploy behind a reverse proxy that overwrites X-Forwarded-For / " +
+      "X-Real-IP and set TRUSTED_PROXY_HEADERS=true (automatic on Vercel).",
+  );
+}
+
 export function getClientIp(request: Request) {
   // Vercel's edge overwrites x-real-ip and x-forwarded-for with the real
   // client address, so those headers are safe to trust there by default.
@@ -112,6 +132,9 @@ export function getClientIp(request: Request) {
       return realIp;
     }
   } else if (process.env.TRUSTED_PROXY_HEADERS !== "true") {
+    if (process.env.NODE_ENV === "production") {
+      warnMissingClientIp("TRUSTED_PROXY_HEADERS is not set to \"true\".");
+    }
     return UNKNOWN_CLIENT_IP;
   }
 
@@ -121,5 +144,13 @@ export function getClientIp(request: Request) {
     return forwardedFor.split(",")[0]?.trim() || UNKNOWN_CLIENT_IP;
   }
 
-  return request.headers.get("x-real-ip")?.trim() || UNKNOWN_CLIENT_IP;
+  const realIp = request.headers.get("x-real-ip")?.trim();
+
+  if (!realIp && process.env.NODE_ENV === "production") {
+    warnMissingClientIp(
+      "proxy headers are trusted but the request carried no X-Forwarded-For or X-Real-IP.",
+    );
+  }
+
+  return realIp || UNKNOWN_CLIENT_IP;
 }

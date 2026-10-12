@@ -4,6 +4,8 @@ import type {
   Resolver,
 } from "react-hook-form";
 
+import { getPasswordPolicyError } from "./password-policy.ts";
+
 const CONTROL_CHARACTERS = /[\u0000-\u001F\u007F]/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NAME_CHARACTERS = /^[\p{L}\p{M}' -]+$/u;
@@ -73,29 +75,7 @@ function nameError(value: string) {
 }
 
 function passwordError(value: string) {
-  if (value.length < 6) {
-    return "Password must be at least 6 characters.";
-  }
-
-  if (value.length > 128) {
-    return "Password must be at most 128 characters.";
-  }
-
-  if (!/[a-z]/.test(value)) {
-    return "Include at least one lowercase letter.";
-  }
-
-  if (!/[A-Z]/.test(value)) {
-    return "Include at least one uppercase letter.";
-  }
-
-  if (!/[0-9]/.test(value)) {
-    return "Include at least one number.";
-  }
-
-  if (!/[^A-Za-z0-9]/.test(value)) {
-    return "Include at least one special character.";
-  }
+  return getPasswordPolicyError(value);
 }
 
 export type LoginInput = {
@@ -221,13 +201,49 @@ export const changePasswordResolver = createResolver<ChangePasswordInput>(
 export type UpdateProfileInput = {
   name: string;
   email: string;
+  currentPassword?: string;
 };
+
+// The current password is only required (and only sent) when the email
+// address differs from the one the form was loaded with.
+export function createUpdateProfileResolver(originalEmail: string) {
+  const normalizedOriginalEmail = normalizeEmail(originalEmail);
+
+  return createResolver<UpdateProfileInput>((input) => {
+    const email = normalizeEmail(input.email);
+    const emailChanged = email !== normalizedOriginalEmail;
+    const currentPassword = input.currentPassword ?? "";
+    const values: UpdateProfileInput = {
+      name: input.name.trim(),
+      email,
+      ...(emailChanged ? { currentPassword } : {}),
+    };
+    const errors: ValidationErrors<UpdateProfileInput> = {
+      name: nameError(values.name),
+      email: emailError(values.email),
+    };
+
+    if (emailChanged) {
+      if (!currentPassword) {
+        errors.currentPassword =
+          "Enter your current password to change your email.";
+      } else if (currentPassword.length > 128) {
+        errors.currentPassword = "Password must be at most 128 characters.";
+      }
+    }
+
+    return { values, errors };
+  });
+}
 
 export const updateProfileResolver = createResolver<UpdateProfileInput>(
   (input) => {
     const values = {
       name: input.name.trim(),
       email: normalizeEmail(input.email),
+      ...(input.currentPassword
+        ? { currentPassword: input.currentPassword }
+        : {}),
     };
 
     return {

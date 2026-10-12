@@ -10,6 +10,7 @@ import {
 import { Check, Eye, EyeOff, LoaderCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { PASSWORD_RULES } from "@/validations/password-policy";
 
 type FieldProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string;
@@ -192,12 +193,10 @@ export function SubmitButton({
 }
 
 export function PasswordChecklist({ password }: { password: string }) {
-  const rules = [
-    { label: "6+ characters", met: password.length >= 6 },
-    { label: "Upper & lowercase", met: /[A-Z]/.test(password) && /[a-z]/.test(password) },
-    { label: "Number", met: /[0-9]/.test(password) },
-    { label: "Special character", met: /[^A-Za-z0-9]/.test(password) },
-  ];
+  const rules = PASSWORD_RULES.map((rule) => ({
+    label: rule.label,
+    met: rule.test(password ?? ""),
+  }));
 
   return (
     <div className="grid grid-cols-2 gap-x-3 gap-y-2 rounded-md border border-zinc-800 bg-zinc-950 p-3 text-xs">

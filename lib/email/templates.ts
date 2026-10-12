@@ -170,3 +170,46 @@ export function passwordChangedEmailTemplate(
     }),
   };
 }
+
+export function emailChangedNoticeTemplate(
+  name: string,
+  newEmail: string,
+): EmailTemplate {
+  const safeName = escapeHtml(name);
+  const safeNewEmail = escapeHtml(newEmail);
+
+  return {
+    subject: "Your Stockeyfy email address was changed",
+    text: `Hi ${name}, the email address on your Stockeyfy account was changed to ${newEmail}. All sessions were signed out. If you did not make this change, contact your administrator immediately.`,
+    html: emailLayout({
+      preheader: "Security notice: the email on your Stockeyfy account changed.",
+      heading: "Email address changed",
+      body: `Hi ${safeName},<br><br>The email address on your Stockeyfy account was changed to <strong>${safeNewEmail}</strong>. All existing sessions have been signed out.`,
+      footer:
+        "If you did not make this change, contact your administrator immediately. Future security emails will go to the new address.",
+    }),
+  };
+}
+
+export function accountExistsNoticeTemplate(
+  name: string,
+  loginUrl: string,
+  resetUrl: string,
+): EmailTemplate {
+  const safeName = escapeHtml(name);
+  const safeResetUrl = escapeHtml(resetUrl);
+
+  return {
+    subject: "Someone tried to create a Stockeyfy account with your email",
+    text: `Hi ${name}, someone tried to register a new Stockeyfy account with this email, but you already have one. Sign in: ${loginUrl}. Forgot your password? Reset it: ${resetUrl}. If this was not you, you can ignore this email.`,
+    html: emailLayout({
+      preheader: "You already have a Stockeyfy account with this email.",
+      heading: "You already have an account",
+      body: `Hi ${safeName},<br><br>Someone tried to create a new account with this email address, but one already exists. If that was you, just sign in. Forgot your password? <a href="${safeResetUrl}" style="color:#60a5fa">Reset it here</a>.`,
+      action: "Sign in",
+      actionUrl: loginUrl,
+      footer:
+        "If you did not try to register, no action is needed. Your account has not been changed.",
+    }),
+  };
+}

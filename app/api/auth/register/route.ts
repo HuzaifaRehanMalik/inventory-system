@@ -3,8 +3,8 @@ import { after, type NextRequest } from "next/server";
 import { errorResponse, logServerError, successResponse } from "@/lib/api/errors";
 import { parseJson, assertSameOrigin } from "@/lib/api/request";
 import { enforceRequestRateLimit } from "@/lib/api/rate-limit";
-import { registerUser } from "@/lib/auth/service";
-import { sendVerificationEmail } from "@/lib/email";
+import { prepareExistingAccountNotice, registerUser } from "@/lib/auth/service";
+import { sendAccountExistsNotice, sendVerificationEmail } from "@/lib/email";
 import { startPerformanceTimer, withPerformanceTimer } from "@/lib/performance";
 import { registerSchema } from "@/validations/auth";
 
@@ -26,26 +26,44 @@ export async function POST(request: NextRequest) {
       }),
     );
 
-    const delivery = await withPerformanceTimer(
+    const result = await withPerformanceTimer(
       "registration.create-user",
       () => registerUser(input),
     );
 
+    // The response is identical whether or not the email was already
+    // registered, so this endpoint cannot be used to enumerate accounts.
+    // Any extra work for an existing account happens after the response.
     after(async () => {
       try {
-        await sendVerificationEmail(
-          delivery.email,
-          delivery.name,
-          delivery.token,
-        );
+        if (result.status === "created") {
+          await sendVerificationEmail(
+            result.delivery.email,
+            result.delivery.name,
+            result.delivery.token,
+          );
+          return;
+        }
+
+        const notice = await prepareExistingAccountNotice(result.email);
+
+        if (notice?.type === "verification") {
+          await sendVerificationEmail(
+            notice.delivery.email,
+            notice.delivery.name,
+            notice.delivery.token,
+          );
+        } else if (notice?.type === "account-exists") {
+          await sendAccountExistsNotice(notice.email, notice.name);
+        }
       } catch (error) {
-        logServerError(error, "registration verification email");
+        logServerError(error, "registration email");
       }
     });
 
     const response = successResponse(
       { emailSent: true },
-      "Account created. Check your email to verify it.",
+      "Check your email to finish setting up your account.",
       201,
     );
     response.headers.append(

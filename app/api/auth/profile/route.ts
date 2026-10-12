@@ -6,7 +6,7 @@ import { assertSameOrigin, parseJson } from "@/lib/api/request";
 import { enforceRequestRateLimit } from "@/lib/api/rate-limit";
 import { updateProfile } from "@/lib/auth/service";
 import { requireApiUser } from "@/lib/auth/session";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendEmailChangedNotice, sendVerificationEmail } from "@/lib/email";
 import { updateProfileSchema } from "@/validations/auth";
 
 export async function GET() {
@@ -37,6 +37,7 @@ export async function PATCH(request: NextRequest) {
     const currentUser = await requireApiUser();
     const input = await parseJson(request, updateProfileSchema);
 
+    // Also bounds current-password guessing on email changes.
     await enforceRequestRateLimit(request, "update-profile", {
       identifier: currentUser.id,
       limit: 10,
@@ -51,6 +52,8 @@ export async function PATCH(request: NextRequest) {
 
     if (result.delivery) {
       const delivery = result.delivery;
+      const previousEmailNotice = result.previousEmailNotice;
+
       after(async () => {
         try {
           await sendVerificationEmail(
@@ -60,6 +63,18 @@ export async function PATCH(request: NextRequest) {
           );
         } catch (error) {
           logServerError(error, "profile email change verification");
+        }
+
+        if (previousEmailNotice) {
+          try {
+            await sendEmailChangedNotice(
+              previousEmailNotice.email,
+              previousEmailNotice.name,
+              previousEmailNotice.newEmail,
+            );
+          } catch (error) {
+            logServerError(error, "profile email change notice");
+          }
         }
       });
     } else {

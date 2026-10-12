@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, UserRound } from "lucide-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import { ApiClientError, apiRequest } from "@/lib/client-api";
-import { FormField, SubmitButton } from "@/components/auth/form-controls";
 import {
-  updateProfileResolver,
+  FormField,
+  PasswordField,
+  SubmitButton,
+} from "@/components/auth/form-controls";
+import {
+  createUpdateProfileResolver,
   type UpdateProfileInput,
 } from "@/validations/auth-client";
 
@@ -22,10 +26,14 @@ export function ProfileForm({
 }) {
   const router = useRouter();
   const [saved, setSaved] = useState(false);
+  const resolver = useMemo(() => createUpdateProfileResolver(email), [email]);
   const form = useForm<UpdateProfileInput>({
-    resolver: updateProfileResolver,
-    defaultValues: { name, email },
+    resolver,
+    defaultValues: { name, email, currentPassword: "" },
   });
+  const watchedEmail = useWatch({ control: form.control, name: "email" });
+  const emailChanged =
+    (watchedEmail ?? "").trim().toLowerCase() !== email.trim().toLowerCase();
 
   async function onSubmit(input: UpdateProfileInput) {
     setSaved(false);
@@ -45,7 +53,7 @@ export function ProfileForm({
         return;
       }
 
-      form.reset(input);
+      form.reset({ name: input.name, email: input.email, currentPassword: "" });
       router.refresh();
     } catch (error) {
       if (error instanceof ApiClientError) {
@@ -76,11 +84,23 @@ export function ProfileForm({
         autoComplete="email"
         icon={<Mail className="size-4" />}
         error={form.formState.errors.email?.message}
-        hint="Changing your email signs you out and requires verification."
+        hint="Changing your email requires your current password, signs you out, and requires verification."
         {...form.register("email", {
           onChange: () => setSaved(false),
         })}
       />
+      {emailChanged ? (
+        <PasswordField
+          label="Current password"
+          autoComplete="current-password"
+          placeholder="Confirm it's you"
+          error={form.formState.errors.currentPassword?.message}
+          hint="Required to change your email address."
+          {...form.register("currentPassword", {
+            onChange: () => setSaved(false),
+          })}
+        />
+      ) : null}
       <div className="flex items-center gap-4">
         <SubmitButton
           loading={form.formState.isSubmitting}

@@ -4,6 +4,8 @@ import nodemailer from "nodemailer";
 
 import { getServerEnvironment } from "@/lib/env";
 import {
+  accountExistsNoticeTemplate,
+  emailChangedNoticeTemplate,
   passwordChangedEmailTemplate,
   passwordResetEmailTemplate,
   verificationEmailTemplate,
@@ -88,5 +90,24 @@ export async function sendPasswordChangedEmail(to: string, name: string) {
   await sendTemplate(
     to,
     passwordChangedEmailTemplate(name, url.toString()),
+  );
+}
+
+export async function sendEmailChangedNotice(
+  to: string,
+  name: string,
+  newEmail: string,
+) {
+  await sendTemplate(to, emailChangedNoticeTemplate(name, newEmail));
+}
+
+export async function sendAccountExistsNotice(to: string, name: string) {
+  const { APP_URL } = getServerEnvironment();
+  const loginUrl = new URL("/login", APP_URL);
+  const resetUrl = new URL("/forgot-password", APP_URL);
+
+  await sendTemplate(
+    to,
+    accountExistsNoticeTemplate(name, loginUrl.toString(), resetUrl.toString()),
   );
 }

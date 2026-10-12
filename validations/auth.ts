@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+import {
+  getPasswordPolicyError,
+  PASSWORD_MAX_LENGTH,
+} from "./password-policy.ts";
+
 const CONTROL_CHARACTERS = /[\u0000-\u001F\u007F]/;
 const NAME_CHARACTERS = /^[\p{L}\p{M}' -]+$/u;
 const TOKEN_PATTERN = /^[A-Za-z0-9_-]{32,128}$/;
@@ -19,14 +24,18 @@ export const nameSchema = z
   .refine((value) => !CONTROL_CHARACTERS.test(value), "Full name contains invalid characters.")
   .refine((value) => NAME_CHARACTERS.test(value), "Use letters, spaces, apostrophes, or hyphens only.");
 
+// Minimum 12 characters, mixed character classes, and a blocklist check
+// against common / breached password patterns (see password-policy.ts).
 export const passwordSchema = z
   .string()
-  .min(6, "Password must be at least 6 characters.")
-  .max(128, "Password must be at most 128 characters.")
-  .regex(/[a-z]/, "Include at least one lowercase letter.")
-  .regex(/[A-Z]/, "Include at least one uppercase letter.")
-  .regex(/[0-9]/, "Include at least one number.")
-  .regex(/[^A-Za-z0-9]/, "Include at least one special character.");
+  .max(PASSWORD_MAX_LENGTH, `Password must be at most ${PASSWORD_MAX_LENGTH} characters.`)
+  .superRefine((value, context) => {
+    const message = getPasswordPolicyError(value);
+
+    if (message) {
+      context.addIssue({ code: "custom", message });
+    }
+  });
 
 export const loginSchema = z.object({
   email: emailSchema,
@@ -88,6 +97,8 @@ export const resendVerificationSchema = z.object({
 export const updateProfileSchema = z.object({
   name: nameSchema,
   email: emailSchema,
+  // Required by the service layer whenever the email address changes.
+  currentPassword: z.string().max(128).optional(),
 });
 
 export type LoginInput = z.infer<typeof loginSchema>;

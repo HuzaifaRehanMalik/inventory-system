@@ -18,21 +18,24 @@ export async function POST(request: NextRequest) {
       windowMs: 15 * 60 * 1000,
     });
 
-    const delivery = await createPasswordReset(input.email);
+    // The account lookup and token creation only happen for real accounts,
+    // so doing them before responding would make real emails measurably
+    // slower. Run all of it after the response so timing is uniform.
+    after(async () => {
+      try {
+        const delivery = await createPasswordReset(input.email);
 
-    if (delivery) {
-      after(async () => {
-        try {
+        if (delivery) {
           await sendPasswordResetEmail(
             delivery.email,
             delivery.name,
             delivery.token,
           );
-        } catch (error) {
-          logServerError(error, "password reset email");
         }
-      });
-    }
+      } catch (error) {
+        logServerError(error, "password reset email");
+      }
+    });
 
     return successResponse(
       { emailSent: true },

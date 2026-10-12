@@ -11,6 +11,7 @@ import type {
 } from "@/validations/auth";
 import {
   BCRYPT_ROUNDS,
+  DUMMY_PASSWORD_HASH,
   PASSWORD_RESET_TOKEN_TTL_MS,
   VERIFICATION_TOKEN_TTL_MS,
 } from "@/lib/auth/constants";
@@ -30,6 +31,17 @@ type RegisteredUserRow = {
   name: string;
 };
 
+// Registration never tells the caller whether the email was already taken
+// (that would let anyone enumerate accounts). The route uses this result only
+// to decide which email to send in the background.
+export type RegistrationResult =
+  | { status: "created"; delivery: EmailDelivery }
+  | { status: "exists"; email: string };
+
+export type ExistingAccountNotice =
+  | { type: "verification"; delivery: EmailDelivery }
+  | { type: "account-exists"; email: string; name: string };
+
 function isUniqueConstraintError(error: unknown) {
   return (
     typeof error === "object" &&
@@ -41,7 +53,7 @@ function isUniqueConstraintError(error: unknown) {
 
 export async function registerUser(
   input: RegisterInput,
-): Promise<EmailDelivery> {
+): Promise<RegistrationResult> {
   const token = generateSecureToken();
   const tokenHash = hashToken(token);
   const passwordHash = await withPerformanceTimer(
@@ -83,24 +95,42 @@ export async function registerUser(
     const user = users[0];
 
     if (!user) {
-      throw new AppError(
-        409,
-        "EMAIL_ALREADY_REGISTERED",
-        "An account with this email already exists.",
-      );
+      return { status: "exists", email: input.email };
     }
 
-    return { email: user.email, name: user.name, token };
+    return {
+      status: "created",
+      delivery: { email: user.email, name: user.name, token },
+    };
   } catch (error) {
     if (isUniqueConstraintError(error)) {
-      throw new AppError(
-        409,
-        "EMAIL_ALREADY_REGISTERED",
-        "An account with this email already exists.",
-      );
+      return { status: "exists", email: input.email };
     }
     throw error;
   }
+}
+
+// Called in the background after a registration attempt hit an existing
+// email. Unverified accounts get a fresh verification link; verified ones get
+// a notice to the real owner pointing at sign-in / password reset.
+export async function prepareExistingAccountNotice(
+  email: string,
+): Promise<ExistingAccountNotice | null> {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { email: true, name: true, emailVerified: true, status: true },
+  });
+
+  if (!user || user.status !== "ACTIVE") {
+    return null;
+  }
+
+  if (!user.emailVerified) {
+    const delivery = await createVerificationEmail(user.email);
+    return delivery ? { type: "verification", delivery } : null;
+  }
+
+  return { type: "account-exists", email: user.email, name: user.name };
 }
 
 export async function createPasswordReset(
@@ -395,6 +425,34 @@ export async function updateProfile(
   }
 
   const emailChanged = currentUser.email !== input.email;
+
+  // Changing the email is an account-takeover vector (new email + forgot
+  // password), so a session alone is not enough: re-verify the password.
+  if (emailChanged) {
+    const currentPassword = input.currentPassword ?? "";
+    const passwordMatches = await compare(
+      currentPassword,
+      currentUser.passwordHash ?? DUMMY_PASSWORD_HASH,
+    );
+
+    if (!currentPassword || !currentUser.passwordHash || !passwordMatches) {
+      throw new AppError(
+        400,
+        "CURRENT_PASSWORD_INCORRECT",
+        "Enter your current password to change your email.",
+        {
+          fieldErrors: {
+            currentPassword: [
+              currentPassword
+                ? "Current password is incorrect."
+                : "Current password is required to change your email.",
+            ],
+          },
+        },
+      );
+    }
+  }
+
   const token = emailChanged ? generateSecureToken() : null;
 
   try {
@@ -438,6 +496,10 @@ export async function updateProfile(
               expires: new Date(Date.now() + VERIFICATION_TOKEN_TTL_MS),
             },
           });
+          // Outstanding reset links were issued to the old address.
+          await transaction.passwordResetToken.deleteMany({
+            where: { userId },
+          });
         }
 
         const user = await transaction.user.findUniqueOrThrow({
@@ -460,6 +522,15 @@ export async function updateProfile(
             emailChanged && token
               ? { email: user.email, name: user.name, token }
               : null,
+          // Notice to the previous address so the real owner can react if
+          // the change was not theirs.
+          previousEmailNotice: emailChanged
+            ? {
+                email: currentUser.email,
+                name: currentUser.name,
+                newEmail: user.email,
+              }
+            : null,
         };
       },
       { isolationLevel: "Serializable" },
